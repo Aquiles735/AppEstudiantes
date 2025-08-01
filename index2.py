@@ -1,4 +1,4 @@
-
+import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 import sqlite3
@@ -10,7 +10,7 @@ import sqlite3
 class Control:
     #nombre base de datos , para conectar la y  a creada BD
     db_name = 'Institucional.db'
-    
+
     def __init__ (self,window):
         self.wind=window
         
@@ -46,41 +46,45 @@ class Control:
         self.apellido.grid(row=1, column=3)      
 
         ttk.Button(frame, text='Registrar Estudiante').grid(row=2,column=1, columnspan= 3, sticky= W+E)
-        ttk.Button(text='Registrar Prof.', command=self.agrgar_profesor).grid(row=4, column=1, columnspan=1,sticky=W + E )
-        self.tree=ttk.Treeview(height= 20, columns=3)
-        self.tree.grid(row=5, column=0, columnspan=3)
-        self.tree.heading('#0', text='Nombre', anchor= CENTER)
-        self.tree.heading('#1', text='Apellido', anchor= CENTER)
+        ttk.Button(text='Registrar Prof.', command=self.agregar_profesor).grid(row=4, column=0, columnspan=1,sticky=W + E )
+        self.tree=ttk.Treeview(columns=('col0', 'col1', 'col2', 'col3'), show='headings')
+        self.tree.grid(row=5, column=0)
+        self.tree.heading('col0', text='Nivel', anchor= CENTER)
+        self.tree.heading('col1', text='Seccion', anchor= CENTER)
+        self.tree.heading('col2', text='Nombre', anchor= CENTER)
+        self.tree.heading('col3', text='Apellido', anchor= CENTER)
         
 
       #panel profesor
         
-    def agrgar_profesor(self):
+    def agregar_profesor(self):                       
+        
+        self.agregar_profesor=Toplevel()
+        #self.agregar_profesor.title='Agragar Profesor'
        
-        self.agrgar_profesor=Toplevel()
-        #self.agrgar_profesor.title='Agragar Profesor'
-       
-        Label(self.agrgar_profesor,text= 'Nombre:').grid(row=0, column=0,pady=20,padx=10)
-        self.nivel=Entry(self.agrgar_profesor)
+        Label(self.agregar_profesor,text= 'Nombre:').grid(row=0, column=0)
+        self.nivel=Entry(self.agregar_profesor)
         #para que el cursor este en el campo al iniciar
         self.nivel.focus()
         self.nivel.grid(row=0, column=1)
 
         # Seccion de estudio
-        Label(self.agrgar_profesor,text= 'Apellido:').grid(row=0, column=2,pady=20,padx=10)
-        self.seccion=Entry(self.agrgar_profesor)
-        self.seccion.grid(row=0, column=3,padx=20)
+        Label(self.agregar_profesor,text= 'Apellido:').grid(row=0, column=2)
+        self.seccion=Entry(self.agregar_profesor)
+        self.seccion.grid(row=0, column=3)
 
-        Label(self.agrgar_profesor,text= 'Email:').grid(row=1, column=0)
-        self.nombre=Entry(self.agrgar_profesor)
+        Label(self.agregar_profesor,text= 'Email:').grid(row=1, column=0)
+        self.nombre=Entry(self.agregar_profesor)
         self.nombre.grid(row=1, column=1)
     
-        ttk.Button(self.agrgar_profesor,text='Registrar Profesor').grid(row=2,column=0,columnspan=4, sticky= W+E,pady=20,padx=30)
+        ttk.Button(self.agregar_profesor,text='Registrar Profesor').grid(row=2,column=0, sticky= W+E)
 
-        self.tree=ttk.Treeview(self.agrgar_profesor,height= 20,columns=3)
-        self.tree.grid(row=5, column=0, columnspan=3)
-        self.tree.heading('#0', text='Nombre', anchor= CENTER)
-        self.tree.heading('#1', text='Apellido',anchor=CENTER)
+        self.tree=ttk.Treeview(self.agregar_profesor,columns=('col0', 'col1', 'col2'),show= 'headings')
+        self.tree.grid(row=5, column=0)
+        self.tree.heading('col0', text='Nombre', anchor= CENTER)
+        self.tree.heading('col1', text='Apellido',anchor=CENTER)
+        self.tree.heading('col2', text='Email',anchor=CENTER)
+        
        
        
       
