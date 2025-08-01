@@ -56,16 +56,20 @@ class Control:
         btn_salir.grid(row=5, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
 
         # Treeview principal
-        self.tree=ttk.Treeview(self.wind, columns=('col0', 'col1', 'col2', 'col3'), show='headings')
+        self.tree=ttk.Treeview(self.wind, columns=('col0', 'col1', 'col2', 'col3','col4','col5'), show='headings')
         self.tree.grid(row=5, column=0, padx=10, pady=10, sticky="nsew")
-        self.tree.heading('col0', text='Nivel', anchor=CENTER)
-        self.tree.heading('col1', text='Seccion', anchor=CENTER)
-        self.tree.heading('col2', text='Nombre', anchor=CENTER)
-        self.tree.heading('col3', text='Apellido', anchor=CENTER)
+        self.tree.heading('col0', text='Cédula', anchor=CENTER)
+        self.tree.heading('col1', text='Nombre', anchor=CENTER)
+        self.tree.heading('col2', text='Apellido', anchor=CENTER)
+        self.tree.heading('col3', text='Nivel', anchor=CENTER)
+        self.tree.heading('col4', text='Sección', anchor=CENTER)
+        self.tree.heading('col5', text='Email', anchor=CENTER)
         self.tree.column('col0', width=100)
-        self.tree.column('col1', width=50)
-        self.tree.column('col2', width=300)
-        self.tree.column('col3', width=300)
+        self.tree.column('col2', width=200)
+        self.tree.column('col1', width=200)
+        self.tree.column('col3', width=50)
+        self.tree.column('col4', width=50)
+        self.tree.column('col5', width=300)
         
     def agregar_notas(self):     
         # --- Al hacer clic en el botón, se crea una instancia de la clase VentanaProfesor ---
