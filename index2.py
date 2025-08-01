@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 import sqlite3
-# --- Importamos la clase VentanaProfesor del archivo profesor.py ---
-from componentes.profesor import VentanaProfesor
+
+from componentes.notas import VentanaNotas
 
 class Control:
     # nombre base de datos, para conectar la ya creada BD
@@ -32,19 +32,29 @@ class Control:
         combobox_opciones.set(opciones[0]) 
         combobox_opciones.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
 
-        # Nombre y Apellido
-        Label(frame, text='Nombre:').grid(row=1, column=0)
+        # CI,Nombre y Apellido
+        Label(frame, text='C.I: ').grid(row=1, column=0)
         self.nombre=Entry(frame)
         self.nombre.grid(row=1, column=1)
 
-        Label(frame, text='Apellido:').grid(row=1, column=2)
+        Label(frame, text='Nombre:').grid(row=1, column=2)
         self.apellido=Entry(frame)
-        self.apellido.grid(row=1, column=3)      
+        self.apellido.grid(row=1, column=3)  
+
+        Label(frame, text='Apellido:').grid(row=2, column=0)
+        self.apellido=Entry(frame)
+        self.apellido.grid(row=2, column=1)
+        Label(frame, text='Email:').grid(row=2, column=2)
+        self.apellido=Entry(frame)
+        self.apellido.grid(row=2, column=3)         
 
         # Botones
-        ttk.Button(frame, text='Registrar Estudiante').grid(row=2, column=1, columnspan=3, sticky=W+E)
-        ttk.Button(self.wind, text='Registrar Prof.', command=self.agregar_profesor).grid(row=4, column=0, columnspan=1, sticky=W + E)
-        
+        ttk.Button(frame, text='Registrar Estudiante').grid(row=3, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+        ttk.Button(frame, text='Registrar Notas.', command=self.agregar_notas).grid(row=4, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+
+        btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
+        btn_salir.grid(row=5, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+
         # Treeview principal
         self.tree=ttk.Treeview(self.wind, columns=('col0', 'col1', 'col2', 'col3'), show='headings')
         self.tree.grid(row=5, column=0, padx=10, pady=10, sticky="nsew")
@@ -57,9 +67,9 @@ class Control:
         self.tree.column('col2', width=300)
         self.tree.column('col3', width=300)
         
-    def agregar_profesor(self):     
+    def agregar_notas(self):     
         # --- Al hacer clic en el botón, se crea una instancia de la clase VentanaProfesor ---
-        VentanaProfesor(self.wind)
+        VentanaNotas(self.wind)
 
 if __name__ == '__main__':
     window = Tk()
