@@ -79,9 +79,9 @@ if __name__ == '__main__':
     window = Tk()
     apliclation = Control(window) 
     window.mainloop()
-# en PythonCrud iniciar aplicación 
+# en App iniciar aplicación 
 # python3 index2.py
 # para git, github abrir AppAcademi
 
-#source .venv/bin/activate
-#deactivate
+#    source .venv/bin/activate
+#   deactivate
