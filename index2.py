@@ -7,7 +7,7 @@ from componentes.notas import VentanaNotas
 
 class Control:
     # nombre base de datos, para conectar la ya creada BD
-    db_name = 'Institucional.db'
+    db_name = 'registro_estudiante.db'
 
     def __init__(self, window):
         self.wind = window
@@ -18,42 +18,55 @@ class Control:
         frame.grid(row=0, column=0, columnspan=3, pady=20, padx=100)
         
         # --- Widgets de la ventana principal ---
+        
+        # CI,Nombre y Apellido
+        # Nombres de atributos corregidos (cedula_entry)
+        Label(frame, text='Cedula').grid(row=0, column=0)
+        self.cedula_entry = Entry(frame)
+        self.cedula_entry.grid(row=0, column=1)
+
+        #  Nombres de atributos corregidos (nombre_entry)
+        Label(frame, text='Nombre').grid(row=0, column=2)
+        self.nombre_entry = Entry(frame)
+        self.nombre_entry.grid(row=0, column=3)  
+
+        # Nombres de atributos corregidos (apellido_entry)
+        Label(frame, text='Apellido').grid(row=1, column=0)
+        self.apellido_entry = Entry(frame)
+        self.apellido_entry.grid(row=1, column=1)
+
         # Nivel de estudio
-        Label(frame, text='Nivel:').grid(row=0, column=0)
-        opciones = ['1 año', '2 año', '3 año', '4 año', '5 año']
-        combobox_opciones = ttk.Combobox(frame, values=opciones)
-        combobox_opciones.set(opciones[0]) 
-        combobox_opciones.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        # Nombres de atributos corregidos (nivel_combobox)
+        Label(frame, text='Nivel').grid(row=1, column=2)
+        opciones_nivel = ['1 año', '2 año', '3 año', '4 año', '5 año']
+        self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel)
+        self.nivel_combobox.set(opciones_nivel[0]) 
+        self.nivel_combobox.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
         
         # Sección de estudio
-        Label(frame, text='Seccion:').grid(row=0, column=2)
-        opciones = ['A','B','C','D','E','F','G']
-        combobox_opciones = ttk.Combobox(frame, values=opciones)
-        combobox_opciones.set(opciones[0]) 
-        combobox_opciones.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
+        #  Nombres de atributos corregidos (seccion_combobox)
+        Label(frame, text='Seccion').grid(row=2, column=0)
+        opciones_seccion = ['A','B','C','D','E','F','G']
+        self.seccion_combobox = ttk.Combobox(frame, values=opciones_seccion)
+        self.seccion_combobox.set(opciones_seccion[0]) 
+        self.seccion_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
-        # CI,Nombre y Apellido
-        Label(frame, text='C.I: ').grid(row=1, column=0)
-        self.nombre=Entry(frame)
-        self.nombre.grid(row=1, column=1)
-
-        Label(frame, text='Nombre:').grid(row=1, column=2)
-        self.apellido=Entry(frame)
-        self.apellido.grid(row=1, column=3)  
-
-        Label(frame, text='Apellido:').grid(row=2, column=0)
-        self.apellido=Entry(frame)
-        self.apellido.grid(row=2, column=1)
-        Label(frame, text='Email:').grid(row=2, column=2)
-        self.apellido=Entry(frame)
-        self.apellido.grid(row=2, column=3)         
+        #  Nombres de atributos corregidos (email_entry)
+        Label(frame, text='Email').grid(row=2, column=2)
+        self.email_entry = Entry(frame)
+        self.email_entry.grid(row=2, column=3)         
 
         # Botones
-        ttk.Button(frame, text='Registrar Estudiante').grid(row=3, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+        ttk.Button(frame, text='Registrar Estudiante',command=self.resgist_estud).grid(row=3, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
         ttk.Button(frame, text='Registrar Notas.', command=self.agregar_notas).grid(row=4, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
 
         btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
         btn_salir.grid(row=5, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+
+        # Mensajes de estado
+        self.messaje = Label(frame, text='', fg='red')
+        self.messaje.grid(row=6, column=0, columnspan=4, sticky=W+E)
+
 
         # Treeview principal
         self.tree=ttk.Treeview(self.wind, columns=('col0', 'col1', 'col2', 'col3','col4','col5'), show='headings')
@@ -65,14 +78,73 @@ class Control:
         self.tree.heading('col4', text='Sección', anchor=CENTER)
         self.tree.heading('col5', text='Email', anchor=CENTER)
         self.tree.column('col0', width=100)
-        self.tree.column('col2', width=200)
-        self.tree.column('col1', width=200)
+        self.tree.column('col1', width=100)
+        self.tree.column('col2', width=100)
         self.tree.column('col3', width=50)
         self.tree.column('col4', width=50)
         self.tree.column('col5', width=300)
+
+         #llenando row (filas) todo el codigo siguiene
+    
+        self.get_estudiantes()  
+    #   base de datos registro_estudiante.db
+    def run_query(self, query, parameters = ()):
+        with sqlite3.connect(self.db_name) as conn:
+            cursor=conn.cursor()
+            result=cursor.execute(query, parameters)
+            conn.commit()
+        return result
+    
+    def get_estudiantes(self): 
+         # ---  LIMPIAR EL TREEVIEW ANTES DE RECARGAR ---
+        records = self.tree.get_children()
+        for element in records:
+            self.tree.delete(element)
+                   
+                   #codigo SQL
+        query ='SELECT * FROM estudiantes'
+        db_rows=self.run_query(query)
+        for row in db_rows:
+          #primera columna
+            self.tree.insert('', 'end', text=row[0], values=(row[1], row[2], row[3], row[4], row[5]))
+
+    def validation(self):
+        #  nombres de atributos correctos
+        return (
+            len(self.cedula_entry.get()) != 0 and
+            len(self.nombre_entry.get()) != 0 and
+            len(self.apellido_entry.get()) != 0 and
+            len(self.email_entry.get()) != 0
+        )
+    
+    #registro de estudiantes
+    def resgist_estud (self):
+        if self.validation():
+           # Consulta SQL y parámetros correctos
+           query = 'INSERT INTO estudiantes VALUES (?, ?, ?, ?, ?, ?)'
+           parameters= (
+               self.cedula_entry.get(),
+               self.nombre_entry.get(),
+               self.apellido_entry.get(),
+               self.nivel_combobox.get(),
+               self.seccion_combobox.get(),
+               self.email_entry.get()
+           )
+           self.run_query(query, parameters)
+           self.messaje['text']= 'Estudiante {} agragado satisfactoriamente'.format(self.nombre_entry.get())
+           
+           # Limpiar campos de entrada
+           self.cedula_entry.delete(0, END)
+           self.nombre_entry.delete(0, END)
+           self.apellido_entry.delete(0, END)
+           self.email_entry.delete(0, END)
+        else:
+            self.messaje['text']= 'Todos los campos son requeridos'
+        
+        self.get_estudiantes() 
         
     def agregar_notas(self):     
-        # --- Al hacer clic en el botón, se crea una instancia de la clase VentanaProfesor ---
+        
         VentanaNotas(self.wind)
 
 if __name__ == '__main__':
