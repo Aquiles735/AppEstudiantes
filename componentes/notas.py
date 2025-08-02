@@ -21,7 +21,7 @@ class VentanaNotas:
         self.cedula_entry.grid(row=0, column=1, pady=5, padx=5, sticky="w")
         self.cedula_entry.focus()
         
-        # --- NUEVA LÓGICA PARA CARGAR LA CÉDULA ---
+        # --- LÓGICA PARA CARGAR LA CÉDULA ---
         if cedula_estudiante:
             self.cedula_entry.insert(0, cedula_estudiante)
             self.cedula_entry.config(state='readonly') # Opcional: para evitar que el usuario la cambie
