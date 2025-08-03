@@ -212,7 +212,8 @@ if __name__ == '__main__':
    #    deactivate
    #   git checkout main     <para cambiar de rama a main>  o
    #   git checkout master
-   #   git pull origin master
+   #   
+   # git pull origin master
 
 
 
