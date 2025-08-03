@@ -28,22 +28,27 @@ class VentanaNotas:
 
         tk.Label(contenedor_widgets, text='Evaluacion:').grid(row=1, column=0, pady=5, padx=5, sticky="e")
         opciones_evaluacion = ['evaluacion_1','evaluacion_2','evaluacion_3','evaluacion_4','evaluacion_5','evaluacion_6','evaluacion_7']
-        self.combobox_opciones = ttk.Combobox(contenedor_widgets, values=opciones_evaluacion, state='readonly')
-        self.combobox_opciones.set(opciones_evaluacion[0]) 
-        self.combobox_opciones.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+        self.combobox_opciones_eval = ttk.Combobox(contenedor_widgets, values=opciones_evaluacion, state='readonly')
+        self.combobox_opciones_eval.set(opciones_evaluacion[0]) 
+        self.combobox_opciones_eval.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
         tk.Label(contenedor_widgets, text='Nota:').grid(row=2, column=0, pady=5, padx=5, sticky="e")
         self.nota_entry = tk.Entry(contenedor_widgets)
         self.nota_entry.grid(row=2, column=1, pady=5, padx=5, sticky="w")
 
+        tk.Label(contenedor_widgets, text='Número de Evaluaciones:').grid(row=3, column=0, pady=5, padx=5, sticky="e")
+        opciones_evaluaciones = ['1','2','3','4','5','6','7']
+        self.combobox_num_evaluaciones = ttk.Combobox(contenedor_widgets, values=opciones_evaluaciones, state='readonly')
+        self.combobox_num_evaluaciones.set(opciones_evaluaciones[0]) 
+        self.combobox_num_evaluaciones.grid(row=3, column=1, padx=5, pady=5, sticky="ew") # Valor por defecto
         btn_registrar = ttk.Button(contenedor_widgets, text='Guardar Nota', command=self.guardar_nota)
-        btn_registrar.grid(row=3, column=1, pady=10, sticky="we")
+        btn_registrar.grid(row=4, column=1, pady=10, sticky="we")
         
         btn_actualizar_promedios = ttk.Button(contenedor_widgets, text='Actualizar Promedios', command=self.actualizar_promedios)
-        btn_actualizar_promedios.grid(row=4, column=1, pady=10, sticky="we")
+        btn_actualizar_promedios.grid(row=5, column=1, pady=10, sticky="we")
 
         btn_salir = ttk.Button(contenedor_widgets, text='Salir', command=self.registrar_notas.destroy)
-        btn_salir.grid(row=5, column=1, pady=10, padx=(5,0), sticky="we")
+        btn_salir.grid(row=5, column=2, pady=10, padx=(5,0), sticky="we")
 
         # Treeview
         self.tree = ttk.Treeview(self.registrar_notas, columns=('col1', 'col2','col3','col4','col5','col6','col7','col8','col9','col10'), show='headings')
@@ -101,7 +106,7 @@ class VentanaNotas:
         
         try:
             cedula = self.cedula_entry.get()
-            evaluacion = self.combobox_opciones.get()
+            evaluacion = self.combobox_opciones_eval.get() # CAMBIO AQUÍ
             nota = float(self.nota_entry.get())
             
             query = f"UPDATE notas SET {evaluacion} = ? WHERE cedula_estudiante = ?"
@@ -122,7 +127,21 @@ class VentanaNotas:
 
     def actualizar_promedios(self):
         try:
-            update_promedio_query = """
+            # Obtener el número de evaluaciones desde el input
+            num_evaluaciones_str = self.combobox_num_evaluaciones.get() # CAMBIO AQUÍ
+            
+            # Validar que el valor sea un número entero y mayor que cero
+            try:
+                num_evaluaciones = int(num_evaluaciones_str)
+                if num_evaluaciones <= 0:
+                    self.message['text'] = 'El número de evaluaciones debe ser mayor a 0.'
+                    return
+            except ValueError:
+                self.message['text'] = 'El número de evaluaciones debe ser un número entero válido.'
+                return
+
+            # Consulta para actualizar el promedio, usando el número dinámico
+            update_promedio_query = f"""
             UPDATE notas
             SET promedio_notas = ROUND(
                 (
@@ -133,13 +152,14 @@ class VentanaNotas:
                     COALESCE(evaluacion_5, 0) +
                     COALESCE(evaluacion_6, 0) +
                     COALESCE(evaluacion_7, 0)
-                ) * 1.0 / 7,
+                ) * 1.0 / {num_evaluaciones},
                 2
             );
             """
             self.run_query(update_promedio_query)
 
-            update_total_query = """
+            # Consulta para actualizar la nota definitiva, usando el número dinámico
+            update_total_query = f"""
             UPDATE notas
             SET nota_definitiva = ROUND(
                 (
@@ -150,12 +170,12 @@ class VentanaNotas:
                     COALESCE(evaluacion_5, 0) +
                     COALESCE(evaluacion_6, 0) +
                     COALESCE(evaluacion_7, 0)
-                ) * 1.0 / 7
+                ) * 1.0 / {num_evaluaciones}
             );
             """
             self.run_query(update_total_query)
 
-            self.message['text'] = 'Actualizado promedios y Totales.'
+            self.message['text'] = f'Actualizado promedios y totales usando {num_evaluaciones} evaluaciones.'
             self.get_notes()
 
         except Exception as e:
