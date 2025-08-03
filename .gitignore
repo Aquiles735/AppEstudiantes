@@ -1,2 +1,20 @@
   .venv/
    venv/
+
+venv/
+.venv/
+
+# Directorios de compilación y empaquetado
+dist/
+build/
+
+# Archivo de base de datos SQLite
+*.sqlite
+*.db
+
+# Directorios y archivos de PyInstaller
+__pycache__/
+*.spec
+
+# Archivos de configuración de VS Code
+.vscode/
