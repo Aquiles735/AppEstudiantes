@@ -201,8 +201,6 @@ if __name__ == '__main__':
    #    python3 -m venv venv
    #    source venv/bin/activate
    #    deactivate
-   #  para cambiar rama: 
-   #  git checkout main
 
 
 
