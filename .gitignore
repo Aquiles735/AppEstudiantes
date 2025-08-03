@@ -1,5 +1,11 @@
+<<<<<<< HEAD
   
 # Archivos y directorios generados automáticamente
+=======
+  .venv/
+   venv/
+
+>>>>>>> 4c1445d9eec832c3a0fc018e0b82de5bc36436fe
 venv/
 .venv/
 
