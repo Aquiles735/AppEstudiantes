@@ -50,11 +50,23 @@ class VentanaModificar:
         self.email_entry = tk.Entry(frame)
         self.email_entry.grid(row=5, column=1, sticky="ew", padx=5)
 
+         # --- BOTONES ---
+        # Botón de Guardar Cambios
         btn_modificar = ttk.Button(frame, text='Guardar Cambios', command=self.modificar_estudiante)
         btn_modificar.grid(row=7, column=0, pady=10, sticky="ew")
+        
+        # Vincula el evento de la tecla Enter al botón
+        btn_modificar.bind('<Return>', lambda event: self.modificar_estudiante())
 
+        # Botón de Salir
         btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
         btn_salir.grid(row=7, column=1, pady=10, sticky="ew")
+
+        # Vincula el evento de la tecla Enter al botón de Salir
+        btn_salir.bind('<Return>', lambda event: self.wind.destroy())
+        
+        #  Enter es darle el foco
+        #btn_modificar.focus_set()
 
         self.load_data_to_entries()
 

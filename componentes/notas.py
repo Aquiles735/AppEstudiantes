@@ -41,6 +41,32 @@ class VentanaNotas:
         self.combobox_num_evaluaciones = ttk.Combobox(contenedor_widgets, values=opciones_evaluaciones, state='readonly')
         self.combobox_num_evaluaciones.set(opciones_evaluaciones[0]) 
         self.combobox_num_evaluaciones.grid(row=3, column=1, padx=5, pady=5, sticky="ew") # Valor por defecto
+
+        # botones
+
+        # Botones
+        btn_registrar = ttk.Button(contenedor_widgets, text='Guardar Nota', command=self.guardar_nota)
+        btn_registrar.grid(row=4, column=1, pady=10, sticky="we")
+
+        # Vincula el evento de presionar Enter para que active este botón
+        btn_registrar.bind('<Return>', lambda event=None: self.guardar_nota())
+
+        btn_actualizar_promedios = ttk.Button(contenedor_widgets, text='Actualizar Promedios', command=self.actualizar_promedios)
+        btn_actualizar_promedios.grid(row=5, column=1, pady=10, sticky="we")
+
+        # Vincula el evento de presionar Enter para que active este botón
+        btn_actualizar_promedios.bind('<Return>', lambda event=None: self.actualizar_promedios())
+
+        btn_salir = ttk.Button(contenedor_widgets, text='Salir', command=self.registrar_notas.destroy)
+        btn_salir.grid(row=5, column=2, pady=10, padx=(5,0), sticky="we")
+
+        # Vincula el evento de presionar Enter para que active este botón
+        btn_salir.bind('<Return>', lambda event=None: self.registrar_notas.destroy())
+
+        # Opcional: Define qué botón tendrá el foco inicial para que la tecla Enter funcione
+        # en cuanto se abra la ventana. En este caso, el botón de registrar.
+        #btn_registrar.focus_set()
+        '''
         btn_registrar = ttk.Button(contenedor_widgets, text='Guardar Nota', command=self.guardar_nota)
         btn_registrar.grid(row=4, column=1, pady=10, sticky="we")
         
@@ -49,6 +75,7 @@ class VentanaNotas:
 
         btn_salir = ttk.Button(contenedor_widgets, text='Salir', command=self.registrar_notas.destroy)
         btn_salir.grid(row=5, column=2, pady=10, padx=(5,0), sticky="we")
+        '''
 
         # Treeview
         self.tree = ttk.Treeview(self.registrar_notas, columns=('col1', 'col2','col3','col4','col5','col6','col7','col8','col9','col10'), show='headings')

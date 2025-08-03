@@ -45,20 +45,29 @@ class Control:
 
         Label(frame, text='Email').grid(row=2, column=2)
         self.email_entry = Entry(frame)
-        self.email_entry.grid(row=2, column=3)         
+        self.email_entry.grid(row=2, column=3)    
 
-        # Botones
-        ttk.Button(frame, text='Registrar Estudiante', command=self.resgist_estud).grid(row=3, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
-        ttk.Button(frame, text='Registrar Notas.', command=self.agregar_notas).grid(row=4, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
-        
-        ttk.Button(frame, text='Modificar Estudiante', command=self.modificar_estudiante).grid(row=5, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
-        
-        # --- NUEVO BOTÓN DE ELIMINAR ESTUDIANTE ---
-        ttk.Button(frame, text='Eliminar Estudiante', command=self.eliminar_estudiante).grid(row=6, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
+        # Botones   y se activan con ENTER
+        btn_registrar = ttk.Button(frame, text='Registrar Estudiante', command=self.resgist_estud)
+        btn_registrar.grid(row=3, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_registrar.bind('<Return>', lambda event: btn_registrar.invoke())
+
+        btn_notas = ttk.Button(frame, text='Registrar Notas.', command=self.agregar_notas)
+        btn_notas.grid(row=4, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_notas.bind('<Return>', lambda event: btn_notas.invoke())
+
+        btn_modificar = ttk.Button(frame, text='Modificar Estudiante', command=self.modificar_estudiante)
+        btn_modificar.grid(row=5, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_modificar.bind('<Return>', lambda event: btn_modificar.invoke())
+
+        # --- BOTÓN DE ELIMINAR ESTUDIANTE ---
+        btn_eliminar = ttk.Button(frame, text='Eliminar Estudiante', command=self.eliminar_estudiante)
+        btn_eliminar.grid(row=6, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_eliminar.bind('<Return>', lambda event: btn_eliminar.invoke())
 
         btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
-        btn_salir.grid(row=7, column=0, columnspan=4, sticky=W+E, padx=5, pady=5)
-
+        btn_salir.grid(row=7, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_salir.bind('<Return>', lambda event: btn_salir.invoke())
         self.messaje = Label(frame, text='', fg='red')
         self.messaje.grid(row=8, column=0, columnspan=4, sticky=W+E)
 
@@ -201,7 +210,9 @@ if __name__ == '__main__':
    #    python3 -m venv venv
    #    source venv/bin/activate
    #    deactivate
-
+   #   git checkout main     <para cambiar de rama a main>  o
+   #   git checkout master
+   #   git pull origin master
 
 
 
