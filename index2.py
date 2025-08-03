@@ -36,7 +36,7 @@ class Control:
         self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel)
         self.nivel_combobox.set(opciones_nivel[0]) 
         self.nivel_combobox.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
-        
+
         Label(frame, text='Seccion').grid(row=2, column=0)
         opciones_seccion = ['A','B','C','D','E','F','G']
         self.seccion_combobox = ttk.Combobox(frame, values=opciones_seccion)
@@ -107,8 +107,7 @@ class Control:
         
         db_rows = self.run_query(query)
         for row in db_rows:
-            self.tree.insert('', 'end', text=row[0], values=(row[0], row[1], row[2], row[3], row[4], row[5]))
-
+            self.tree.insert('', 'end', text=row[0], values=row[0:])
 
     def validation(self):
         return (
@@ -150,7 +149,8 @@ class Control:
         values = self.tree.item(selected_item, 'values')
         cedula_estudiante = values[0]  
         
-        VentanaNotas(self.wind, cedula_estudiante)
+        # Se corrige esta línea para pasar el callback_actualizar
+        VentanaNotas(self.wind, cedula_estudiante=cedula_estudiante, callback_actualizar=self.get_estudiantes)
 
     def modificar_estudiante(self):
         selected_item = self.tree.focus()
@@ -205,14 +205,13 @@ if __name__ == '__main__':
     apliclation = Control(window) 
     window.mainloop()
 
-
    #    python3 index2.py
    #    python3 -m venv venv
    #    source venv/bin/activate
    #    deactivate
    #   git checkout main     <para cambiar de rama a main>  o
    #   git checkout master
-   #   
+   #   git push origin HEAD     para push en master github
    # git pull origin master
 
 
