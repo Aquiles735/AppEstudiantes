@@ -5,7 +5,7 @@ a = Analysis(
     ['index2.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('registro_estudiante.db', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

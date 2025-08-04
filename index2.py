@@ -213,6 +213,8 @@ if __name__ == '__main__':
    #   git checkout master
    #   git push origin HEAD     para push en master github
    # git pull origin master
+   #     pyinstaller index2.py   pyinstaller --onefile index2.py 
+   #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
 
 
 
