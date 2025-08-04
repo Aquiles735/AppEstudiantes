@@ -66,9 +66,7 @@ class Control:
         btn_eliminar = ttk.Button(frame, text='Eliminar Estudiante', command=self.eliminar_estudiante)
         btn_eliminar.grid(row=6, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_eliminar.bind('<Return>', lambda event: btn_eliminar.invoke())
-        
-        # --- CAMBIOS AQUÍ: UBICACIÓN DE LOS BOTONES DE LA ÚLTIMA FILA ---
-        # El botón de Salir ahora ocupa 2 columnas
+       
         btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
         btn_salir.grid(row=7, column=0, columnspan=2, sticky='we', padx=5, pady=5)
         btn_salir.bind('<Return>', lambda event: btn_salir.invoke())
@@ -341,5 +339,5 @@ if __name__ == '__main__':
    #     pyinstaller index2.py   pyinstaller --onefile index2.py 
    #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
 
-
+  #   /home/aquiles/Documentos/MiAcademi/AppAcademi/venv/bin/python
 
