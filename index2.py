@@ -1,8 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox, filedialog
 from tkinter import *
 import sqlite3
-from tkinter import messagebox
+import os
+import openpyxl
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
 
 # Importa las clases de las otras ventanas
 from componentes.notas import VentanaNotas
@@ -47,12 +50,12 @@ class Control:
         self.email_entry = Entry(frame)
         self.email_entry.grid(row=2, column=3)    
 
-        # Botones   y se activan con ENTER
+        # Botones y se activan con ENTER
         btn_registrar = ttk.Button(frame, text='Registrar Estudiante', command=self.resgist_estud)
         btn_registrar.grid(row=3, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_registrar.bind('<Return>', lambda event: btn_registrar.invoke())
 
-        btn_notas = ttk.Button(frame, text='Registrar Notas.', command=self.agregar_notas)
+        btn_notas = ttk.Button(frame, text='Registrar Notas', command=self.agregar_notas)
         btn_notas.grid(row=4, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_notas.bind('<Return>', lambda event: btn_notas.invoke())
 
@@ -60,14 +63,21 @@ class Control:
         btn_modificar.grid(row=5, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_modificar.bind('<Return>', lambda event: btn_modificar.invoke())
 
-        # --- BOTÓN DE ELIMINAR ESTUDIANTE ---
         btn_eliminar = ttk.Button(frame, text='Eliminar Estudiante', command=self.eliminar_estudiante)
         btn_eliminar.grid(row=6, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_eliminar.bind('<Return>', lambda event: btn_eliminar.invoke())
-
+        
+        # --- CAMBIOS AQUÍ: UBICACIÓN DE LOS BOTONES DE LA ÚLTIMA FILA ---
+        # El botón de Salir ahora ocupa 2 columnas
         btn_salir = ttk.Button(frame, text='Salir', command=self.wind.destroy)
-        btn_salir.grid(row=7, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        btn_salir.grid(row=7, column=0, columnspan=2, sticky='we', padx=5, pady=5)
         btn_salir.bind('<Return>', lambda event: btn_salir.invoke())
+        
+        # --- NUEVO BOTÓN: DESCARGAR NOTAS ---
+        btn_descargar = ttk.Button(frame, text='Descargar Notas', command=self.descargar_notas_a_excel)
+        btn_descargar.grid(row=7, column=2, columnspan=2, sticky='we', padx=5, pady=5)
+        btn_descargar.bind('<Return>', lambda event: btn_descargar.invoke())
+        
         self.messaje = Label(frame, text='', fg='red')
         self.messaje.grid(row=8, column=0, columnspan=4, sticky=W+E)
 
@@ -97,27 +107,49 @@ class Control:
         return result
     
     def get_estudiantes(self): 
-        # Elimina todos los registros del Treeview para actualizarlos
         records = self.tree.get_children()
         for element in records:
             self.tree.delete(element)
         
-        # 'ASC' o DESC si se quiere orden descendente (decreciente)
-        query = 'SELECT * FROM estudiantes ORDER BY seccion ASC, cedula_estudiante ASC'
+        query = 'SELECT * FROM estudiantes ORDER BY nivel ASC, seccion ASC, CAST(cedula_estudiante AS INTEGER) ASC;'
         
         db_rows = self.run_query(query)
         for row in db_rows:
             self.tree.insert('', 'end', text=row[0], values=row[0:])
 
+    # --- MÉTODO 'validation' ACTUALIZADO CON LA LÓGICA DE VALIDACIÓN ---
     def validation(self):
-        return (
-            len(self.cedula_entry.get()) != 0 and
-            len(self.nombre_entry.get()) != 0 and
-            len(self.apellido_entry.get()) != 0 and
-            len(self.email_entry.get()) != 0
-        )
+        """
+        Valida que los campos requeridos cumplan con el formato.
+        - Cédula: solo números, sin puntos ni separaciones.
+        - Nombre y Apellido: no vacíos y con la primera letra en mayúscula.
+        """
+        cedula = self.cedula_entry.get()
+        nombre = self.nombre_entry.get()
+        apellido = self.apellido_entry.get()
+        email = self.email_entry.get()
+
+        if not cedula.isdigit():
+            self.messaje['text'] = 'La Cédula debe contener solo números.'
+            return False
+
+        if not nombre or not apellido or not email:
+            self.messaje['text'] = 'Todos los campos son requeridos.'
+            return False
+
+        if not nombre.istitle():
+            self.messaje['text'] = 'El Nombre debe comenzar con mayúscula.'
+            return False
+
+        if not apellido.istitle():
+            self.messaje['text'] = 'El Apellido debe comenzar con mayúscula.'
+            return False
+            
+        # Si todas las validaciones pasan
+        return True
     
-    def resgist_estud (self):
+    # --- MÉTODO 'resgist_estud' ACTUALIZADO PARA USAR LA NUEVA VALIDACIÓN ---
+    def resgist_estud(self):
         if self.validation():
            query = 'INSERT INTO estudiantes VALUES (?, ?, ?, ?, ?, ?)'
            parameters= (
@@ -129,28 +161,32 @@ class Control:
                self.email_entry.get()
            )
            self.run_query(query, parameters)
-           self.messaje['text']= 'Estudiante {} agragado satisfactoriamente'.format(self.nombre_entry.get())
+           self.messaje['text']= f'Estudiante {self.nombre_entry.get()} agregado satisfactoriamente'
            
+           # Limpiar los campos después de un registro exitoso
            self.cedula_entry.delete(0, END)
            self.nombre_entry.delete(0, END)
            self.apellido_entry.delete(0, END)
            self.email_entry.delete(0, END)
         else:
-            self.messaje['text']= 'Todos los campos son requeridos'
+           # El mensaje de error ya se ha establecido en el método validation()
+           pass
         
         self.get_estudiantes() 
-        
+
     def agregar_notas(self):     
         selected_item = self.tree.focus()
         if not selected_item:
             messagebox.showwarning("Error", "Debe seleccionar un estudiante para agregar notas.")
             return
-
         values = self.tree.item(selected_item, 'values')
-        cedula_estudiante = values[0]  
-        
-        # Se corrige esta línea para pasar el callback_actualizar
-        VentanaNotas(self.wind, cedula_estudiante=cedula_estudiante, callback_actualizar=self.get_estudiantes)
+        if values:
+            datos_estudiante = {
+                'cedula_estudiante': values[0],
+                'nivel_estudiante': values[3],
+                'seccion_estudiante': values[4]
+            }
+            VentanaNotas(self.wind, **datos_estudiante, callback_actualizar=self.get_estudiantes)
 
     def modificar_estudiante(self):
         selected_item = self.tree.focus()
@@ -180,18 +216,15 @@ class Control:
 
             cedula_a_eliminar = self.tree.item(selected_item, 'text')
             
-            # Mensaje de confirmación
             respuesta = messagebox.askyesno(
                 "Confirmar Eliminación", 
                 f"¿Está seguro de que desea eliminar al estudiante con cédula {cedula_a_eliminar}?"
             )
             
             if respuesta:
-                # Eliminar de la tabla de estudiantes
                 query = 'DELETE FROM estudiantes WHERE cedula_estudiante = ?'
                 self.run_query(query, (cedula_a_eliminar,))
                 
-                # Eliminar de la tabla de notas (si existe)
                 query_notas = 'DELETE FROM notas WHERE cedula_estudiante = ?'
                 self.run_query(query_notas, (cedula_a_eliminar,))
                 
@@ -199,11 +232,103 @@ class Control:
                 self.get_estudiantes()
         except Exception as e:
             self.messaje['text'] = f'Error al eliminar el estudiante: {e}'
+    
+    # --- FUNCIÓN PARA DESCARGAR NOTAS A EXCEL ---
+    def descargar_notas_a_excel(self):
+        """Descarga los datos de los estudiantes y sus notas a un archivo de Excel."""
+        try:
+            # --- NUEVO CÓDIGO: Obtener los datos del estudiante seleccionado ---
+            selected_item = self.tree.focus()
+            if not selected_item:
+                messagebox.showwarning("Error", "Debe seleccionar un estudiante para descargar notas.")
+                return
+
+            values = self.tree.item(selected_item, 'values')
+            if not values:
+                messagebox.showwarning("Error", "Los datos del estudiante seleccionado no son válidos.")
+                return
+            
+            nivel_seleccionado = values[3]
+            seccion_seleccionada = values[4]
+            # --- FIN DEL CÓDIGO NUEVO ---
+
+            # 1. Realizar una consulta para obtener los datos combinados
+            query = """
+            SELECT 
+                e.cedula_estudiante, e.nombre, e.apellido, e.nivel, e.seccion,
+                n.evaluacion_1, n.evaluacion_2, n.evaluacion_3, n.evaluacion_4, n.evaluacion_5,
+                n.evaluacion_6, n.evaluacion_7, n.evaluacion_8, n.evaluacion_9, n.evaluacion_10,
+                n.promedio_notas, n.nota_definitiva
+            FROM estudiantes e
+            INNER JOIN notas n ON e.cedula_estudiante = n.cedula_estudiante
+            WHERE e.nivel = ? AND e.seccion = ?
+            ORDER BY e.nivel ASC, e.seccion ASC, CAST(e.cedula_estudiante AS INTEGER) ASC;
+            """
+            # --- CORRECCIÓN AQUÍ: Pasar los parámetros a run_query ---
+            parameters = (nivel_seleccionado, seccion_seleccionada)
+            data_rows = self.run_query(query, parameters).fetchall()
+
+            if not data_rows:
+                messagebox.showinfo("Información", "No hay datos para descargar para el nivel y sección seleccionados.")
+                return
+
+            # 2. Crear un nuevo libro de Excel y seleccionar la hoja de trabajo
+            wb = Workbook()
+            ws = wb.active
+            ws.title = f"Notas {nivel_seleccionado} {seccion_seleccionada}"
+
+            # 3. Definir los encabezados de las columnas
+            headers = [
+                'Cédula', 'Nombre', 'Apellido', 'Nivel', 'Sección',
+                'Eval 1', 'Eval 2', 'Eval 3', 'Eval 4', 'Eval 5',
+                'Eval 6', 'Eval 7', 'Eval 8', 'Eval 9', 'Eval 10',
+                'Promedio', 'Nota Definitiva'
+            ]
+            ws.append(headers)
+            
+            # Estilo de los encabezados
+            for col in range(1, len(headers) + 1):
+                cell = ws.cell(row=1, column=col)
+                cell.font = Font(bold=True)
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+            
+            # 4. Escribir los datos en el archivo
+            for row in data_rows:
+                ws.append(row)
+
+            # 5. Ajustar el ancho de las columnas
+            for col in ws.columns:
+                max_length = 0
+                column = col[0].column_letter
+                for cell in col:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = (max_length + 2)
+                ws.column_dimensions[column].width = adjusted_width
+
+            # 6. Guardar el archivo
+            filename = filedialog.asksaveasfilename(
+                defaultextension=".xlsx",
+                filetypes=[("Archivos de Excel", "*.xlsx")],
+                title="Guardar como",
+                initialfile=f"Notas_{nivel_seleccionado}_{seccion_seleccionada}.xlsx"
+            )
+            
+            if filename:
+                wb.save(filename)
+                messagebox.showinfo("Éxito", f"Notas guardadas exitosamente en:\n{os.path.basename(filename)}")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error al descargar el archivo: {e}")
 
 if __name__ == '__main__':
     window = Tk()
     apliclation = Control(window) 
     window.mainloop()
+
 
    #    python3 index2.py
    #    python3 -m venv venv
@@ -212,7 +337,7 @@ if __name__ == '__main__':
    #   git checkout main     <para cambiar de rama a main>  o
    #   git checkout master
    #   git push origin HEAD     para push en master github
-   # git pull origin master
+   #                                git pull origin master
    #     pyinstaller index2.py   pyinstaller --onefile index2.py 
    #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
 

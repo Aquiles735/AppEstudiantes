@@ -6,11 +6,16 @@ from tkinter import messagebox
 class VentanaNotas:
     db_name = 'registro_estudiante.db'
 
-    def __init__(self, master, cedula_estudiante=None, callback_actualizar=None):
+    def __init__(self, master, cedula_estudiante=None, nivel_estudiante=None, seccion_estudiante=None, callback_actualizar=None):
         self.registrar_notas = tk.Toplevel(master)
         self.registrar_notas.title("Registrar Notas")
         
         self.callback_actualizar = callback_actualizar
+        
+        # --- CAMBIOS AQUI ---
+        # 1. Guardar el nivel y la sección para usarlos en el filtro.
+        self.nivel_estudiante = nivel_estudiante
+        self.seccion_estudiante = seccion_estudiante
         
         # Llama a la función para inicializar la tabla de notas para todos los estudiantes
         self.inicializar_tabla_notas()
@@ -28,11 +33,11 @@ class VentanaNotas:
         
         if cedula_estudiante:
             self.cedula_entry.insert(0, cedula_estudiante)
-            self.cedula_entry.config(state='readonly')
+            self.cedula_entry.config()
         
         tk.Label(contenedor_widgets, text='Evaluacion:').grid(row=1, column=0, pady=5, padx=5, sticky="e")
         opciones_evaluacion = ['evaluacion_1','evaluacion_2','evaluacion_3','evaluacion_4','evaluacion_5','evaluacion_6','evaluacion_7','evaluacion_8','evaluacion_9','evaluacion_10']
-        self.combobox_opciones_eval = ttk.Combobox(contenedor_widgets, values=opciones_evaluacion, state='readonly')
+        self.combobox_opciones_eval = ttk.Combobox(contenedor_widgets, values=opciones_evaluacion)
         self.combobox_opciones_eval.set(opciones_evaluacion[0]) 
         self.combobox_opciones_eval.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
@@ -40,7 +45,7 @@ class VentanaNotas:
         self.nota_entry = tk.Entry(contenedor_widgets)
         self.nota_entry.grid(row=2, column=1, pady=5, padx=5, sticky="w")
 
-        tk.Label(contenedor_widgets, text='Número de Evaluaciones:').grid(row=3, column=0, pady=5, padx=5, sticky="e")
+        tk.Label(contenedor_widgets, text='Total Evaluaciones en el Lapso:').grid(row=3, column=0, pady=5, padx=5, sticky="e")
         opciones_evaluaciones = ['1','2','3','4','5','6','7','8','9', '10']
         self.combobox_num_evaluaciones = ttk.Combobox(contenedor_widgets, values=opciones_evaluaciones, state='readonly')
         self.combobox_num_evaluaciones.set(opciones_evaluaciones[0]) 
@@ -89,6 +94,7 @@ class VentanaNotas:
         self.tree.column('col12', width=100)
         self.tree.column('col13', width=100)
 
+        # La llamada a get_notes() ahora filtrará los datos.
         self.get_notes()  
 
     def inicializar_tabla_notas(self):
@@ -119,13 +125,38 @@ class VentanaNotas:
         records = self.tree.get_children()
         for element in records:
             self.tree.delete(element)
-                   
-        # Consulta para traer todas las notas, sin filtrar por cédula
-        query ='SELECT cedula_estudiante, evaluacion_1, evaluacion_2, evaluacion_3, evaluacion_4, evaluacion_5, evaluacion_6, evaluacion_7,evaluacion_8,evaluacion_9,evaluacion_10, promedio_notas, nota_definitiva FROM notas'
         
-        db_rows = self.run_query(query)
+        # --- CAMBIOS AQUI ---
+        # 2. Modificar la consulta para usar JOIN y WHERE.
+        if self.nivel_estudiante and self.seccion_estudiante:
+            # Si tenemos el nivel y la sección, filtramos el árbol.
+            query = """
+            SELECT 
+                n.cedula_estudiante, n.evaluacion_1, n.evaluacion_2, n.evaluacion_3, n.evaluacion_4, n.evaluacion_5, 
+                n.evaluacion_6, n.evaluacion_7, n.evaluacion_8, n.evaluacion_9, n.evaluacion_10, 
+                n.promedio_notas, n.nota_definitiva
+            FROM notas n
+            INNER JOIN estudiantes e ON n.cedula_estudiante = e.cedula_estudiante
+            WHERE e.nivel = ? AND e.seccion = ?
+            ORDER BY CAST(n.cedula_estudiante AS INTEGER) ASC
+            """
+            parameters = (self.nivel_estudiante, self.seccion_estudiante)
+        else:
+            # Si no hay nivel/sección (por si abres la ventana sin seleccionar nada),
+            # mostramos todas las notas.
+            query = """
+            SELECT 
+                cedula_estudiante, evaluacion_1, evaluacion_2, evaluacion_3, evaluacion_4, evaluacion_5, 
+                evaluacion_6, evaluacion_7, evaluacion_8, evaluacion_9, evaluacion_10, 
+                promedio_notas, nota_definitiva 
+            FROM notas
+            ORDER BY CAST(cedula_estudiante AS INTEGER) ASC
+            """
+            parameters = ()
+        
+        db_rows = self.run_query(query, parameters)
         for row in db_rows:
-            self.tree.insert('', 'end', text=row[0], values=row[0:])
+            self.tree.insert('', 'end', text=row[0], values=row)
 
     def validation(self):
         return self.cedula_entry.get() and self.nota_entry.get()
@@ -140,6 +171,14 @@ class VentanaNotas:
             evaluacion = self.combobox_opciones_eval.get()
             nota = float(self.nota_entry.get())
             
+            # Verificar si la cédula pertenece al nivel/sección filtrado (opcional)
+            query_check = "SELECT nivel, seccion FROM estudiantes WHERE cedula_estudiante = ?"
+            estudiante_data = self.run_query(query_check, (cedula,)).fetchone()
+            
+            if estudiante_data and (estudiante_data[0] != self.nivel_estudiante or estudiante_data[1] != self.seccion_estudiante):
+                 messagebox.showwarning("Advertencia", "La cédula no corresponde al nivel/sección seleccionado.")
+                 return
+
             query = f"UPDATE notas SET {evaluacion} = ? WHERE cedula_estudiante = ?"
             parameters = (nota, cedula)
             
@@ -204,11 +243,15 @@ class VentanaNotas:
                         COALESCE(evaluacion_10, 0) 
                     ) * 1.0 / {num_evaluaciones},
                     0
-                );
+                )
+            WHERE cedula_estudiante IN (
+                SELECT cedula_estudiante FROM estudiantes WHERE nivel = ? AND seccion = ?
+            );
             """
-            self.run_query(update_query)
+            parameters = (self.nivel_estudiante, self.seccion_estudiante)
+            self.run_query(update_query, parameters)
 
-            self.message['text'] = f'Actualizado promedios y totales usando {num_evaluaciones} evaluaciones.'
+            self.message['text'] = f'Actualizado promedios y totales para el nivel/sección seleccionados usando {num_evaluaciones} evaluaciones.'
             
             self.get_notes()
             
@@ -217,4 +260,6 @@ class VentanaNotas:
 
         except Exception as e:
             self.message['text'] = f'Error al actualizar promedios: {e}'
+
+
 
