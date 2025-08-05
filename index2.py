@@ -41,7 +41,7 @@ class Control:
         self.nivel_combobox.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
 
         Label(frame, text='Seccion').grid(row=2, column=0)
-        opciones_seccion = ['A','B','C','D','E','F','G']
+        opciones_seccion = ['A','B','C','D','E','F','G','H']
         self.seccion_combobox = ttk.Combobox(frame, values=opciones_seccion)
         self.seccion_combobox.set(opciones_seccion[0]) 
         self.seccion_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
