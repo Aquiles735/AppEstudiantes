@@ -35,7 +35,7 @@ class Control:
         self.apellido_entry.grid(row=1, column=1)
 
         Label(frame, text='Nivel').grid(row=1, column=2)
-        opciones_nivel = ['1 año', '2 año', '3 año', '4 año', '5 año']
+        opciones_nivel = ['1 año', '2 año', '3 año', '4 año', '5 año','6 año']
         self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel)
         self.nivel_combobox.set(opciones_nivel[0]) 
         self.nivel_combobox.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
