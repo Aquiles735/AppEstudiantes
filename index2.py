@@ -494,6 +494,6 @@ if __name__ == '__main__':
    #                                git pull origin master
    #     pyinstaller index2.py   pyinstaller --onefile index2.py 
    #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
-
+#      pyinstaller --onefile --noconsole index2.py
   #   /home/aquiles/Documentos/MiAcademi/AppAcademi/venv/bin/python
 
