@@ -492,9 +492,10 @@ if __name__ == '__main__':
    #   git push origin HEAD     para push en master github
    #                                git pull origin master
    #     pyinstaller index2.py   pyinstaller --onefile index2.py 
-   #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
+   #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db;
+
 
   
-
+#    pyinstaller --onefile --windowed --add-data "registro_estudiante.db;." "index2.py"
 #w10        pyinstaller --onefile --windowed --add-data "registro_estudiante.db;
 
