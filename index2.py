@@ -16,7 +16,7 @@ class Control:
 
     def __init__(self, window):
         self.wind = window
-        self.wind.title('Sistema de Registro de Estudiantes')
+        self.wind.title('Sistema de Registro de Estudiantes (Elab: Prof.Aquiles M. 08/2025)')
         self.wind.geometry('1200x700') # Define un tamaño inicial para la ventana
         self.wind.config(bg='#2c3e50') # Color de fondo principal
 
@@ -217,7 +217,8 @@ class Control:
 
         self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", style='Red.TButton', command=self.borrar_todas_las_notas, takefocus=0)
         self.borrar_notas_btn.pack(side='right', padx=5)
-       
+
+
         self.get_estudiantes()
 
     def run_query(self, query, parameters = ()):
