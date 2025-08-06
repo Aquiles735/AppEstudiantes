@@ -1,5 +1,3 @@
-
-
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from tkinter import *
@@ -42,19 +40,37 @@ class Control:
             font=('Helvetica', 10)
         )
         
-        # Estilo para los botones
+
         self.style.configure(
             'TButton',
-            background='#3498db', # Azul
+            background='#3498db', # Azul original
             foreground='white',
             font=('Helvetica', 10, 'bold'),
             borderwidth=1
         )
         self.style.map(
             'TButton',
-            background=[('active', '#2980b9')] # Un tono más oscuro al pasar el ratón
+            background=[('active', '#2980b9')], 
+            foreground=[('focus', '#7de918')],
+            bordercolor=[('focus', '#7de918')]
+        )
+        
+        # Nuevo estilo para los botones rojos
+        self.style.configure(
+            'Red.TButton',
+            background='#e74c3c', # Rojo para el fondo del botón
+            foreground='white',
+            font=('Helvetica', 10, 'bold'),
+            borderwidth=1
+        )
+        self.style.map(
+            'Red.TButton',
+            background=[('active', '#c0392b')], # Rojo oscuro al pasar el ratón
+            foreground=[('focus', 'white')],
+            bordercolor=[('focus', '#7de918')]
         )
 
+        
         # Estilo para los Entry (campos de texto)
         self.style.configure(
             'TEntry',
@@ -91,18 +107,16 @@ class Control:
             background=[('selected', '#3498db')] # Resalta la fila seleccionada
         )
 
+
         # --- Widgets de la ventana principal ---
-        # Contenedor para el formulario y el árbol
         main_container = tk.Frame(self.wind, bg='#2c3e50')
         main_container.pack(fill='both', expand=True, padx=10, pady=10)
-
-       
+        
         frame = LabelFrame(main_container, text='Registro de Estudiantes', bg='#34495e', fg='white', font=('Helvetica', 12, 'bold'))
         frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         main_container.grid_columnconfigure(0, weight=2)
         main_container.grid_columnconfigure(1, weight=1)
 
-        # Configura las columnas para que se expandan
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_columnconfigure(1, weight=1)
         frame.grid_columnconfigure(2, weight=1)
@@ -136,7 +150,7 @@ class Control:
         self.email_entry = ttk.Entry(frame)
         self.email_entry.grid(row=2, column=3, padx=5, pady=5, sticky='ew')
 
-        # Botones
+       
         btn_registrar = ttk.Button(frame, text='Registrar Estudiante', command=self.resgist_estud)
         btn_registrar.grid(row=3, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_registrar.bind('<Return>', lambda event: btn_registrar.invoke())
@@ -149,10 +163,12 @@ class Control:
         btn_modificar.grid(row=7, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_modificar.bind('<Return>', lambda event: btn_modificar.invoke())
         Label(frame, text='Seleccionar un estudiante para retirarlo del registro', bg='#34495e', fg='#7de918').grid(row=8, column=0,columnspan=4, sticky='we', padx=5, pady=5)
+        
         btn_eliminar = ttk.Button(frame, text='Eliminar Estudiante', command=self.eliminar_estudiante)
         btn_eliminar.grid(row=9, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_eliminar.bind('<Return>', lambda event: btn_eliminar.invoke())
         Label(frame, text='Seleccionar un estudiante para descargar en EXCEL las notas de la sección ', bg='#34495e', fg='#7de918').grid(row=10, column=0, columnspan=4, sticky='we', padx=5, pady=5)
+        
         btn_descargar = ttk.Button(frame, text='Descargar Notas en EXCEL', command=self.descargar_notas_a_excel)
         btn_descargar.grid(row=12, column=0, columnspan=4, sticky='we', padx=5, pady=5)
         btn_descargar.bind('<Return>', lambda event: btn_descargar.invoke())
@@ -164,7 +180,7 @@ class Control:
         self.messaje = Label(frame, text='', bg='#34495e', fg='#e74c3c', font=('Helvetica', 10, 'bold')) # Rojo oscuro para errores
         self.messaje.grid(row=13, column=0, columnspan=4, sticky='we')
 
-        # Treeview principal (ocupa el 1/3 restante del ancho)
+       
         self.tree=ttk.Treeview(main_container, columns=('col0', 'col1', 'col2', 'col3','col4','col5'), show='headings')
         self.tree.grid(row=0, column=1, padx=10, pady=10, sticky="nsew") # Ajusta la posición del Treeview
 
@@ -189,16 +205,19 @@ class Control:
         self.tree.column('col4', width=50)
         self.tree.column('col5', width=200)
 
-        # Frame para los nuevos botones
+
+
+          # Frame para los nuevos botones
         botones_frame = tk.Frame(self.wind, bg='#2c3e50')
         botones_frame.pack(side='bottom', fill='x', padx=10, pady=10)
         
-        self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", command=self.borrar_todas_las_notas)
-        self.borrar_notas_btn.pack(side='right', padx=5)
-
-        self.borrar_todo_btn = ttk.Button(botones_frame, text="Borrar todos los estudiantes y notas", command=self.borrar_todo)
+        # Asigna el nuevo estilo 'Red.TButton' a estos dos botones
+        self.borrar_todo_btn = ttk.Button(botones_frame, text="Borrar todos los estudiantes y notas", style='Red.TButton', command=self.borrar_todo, takefocus=0)
         self.borrar_todo_btn.pack(side='right', padx=5)
 
+        self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", style='Red.TButton', command=self.borrar_todas_las_notas, takefocus=0)
+        self.borrar_notas_btn.pack(side='right', padx=5)
+       
         self.get_estudiantes()
 
     def run_query(self, query, parameters = ()):
@@ -219,7 +238,7 @@ class Control:
         for row in db_rows:
             self.tree.insert('', 'end', text=row[0], values=row[0:])
 
-    # --- MÉTODO 'validation' ACTUALIZADO CON LA LÓGICA DE VALIDACIÓN ---
+    #  LA LÓGICA DE VALIDACIÓN ---
     def validation(self):
         """
         Valida que los campos requeridos cumplan con el formato.
@@ -251,7 +270,7 @@ class Control:
         # Si todas las validaciones pasan
         return True
 
-    # --- MÉTODO 'resgist_estud' ACTUALIZADO PARA USAR LA NUEVA VALIDACIÓN ---
+    #  VALIDACIÓN ---
     def resgist_estud(self):
         if self.validation():
             query = 'INSERT INTO estudiantes VALUES (?, ?, ?, ?, ?, ?)'
@@ -344,7 +363,7 @@ class Control:
     def descargar_notas_a_excel(self):
         """Descarga los datos de los estudiantes y sus notas a un archivo de Excel."""
         try:
-            # --- NUEVO CÓDIGO: Obtener los datos del estudiante seleccionado ---
+        
             selected_item = self.tree.focus()
             if not selected_item:
                 messagebox.showwarning("Error", "Debe seleccionar un estudiante para descargar notas.")
@@ -357,8 +376,7 @@ class Control:
 
             nivel_seleccionado = values[3]
             seccion_seleccionada = values[4]
-            # --- FIN DEL CÓDIGO NUEVO ---
-
+          
             # 1. Realizar una consulta para obtener los datos combinados
             query = """
             SELECT
@@ -476,6 +494,7 @@ if __name__ == '__main__':
    #     pyinstaller index2.py   pyinstaller --onefile index2.py 
    #AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
 
-  #   /home/aquiles/Documentos/MiAcademi/AppAcademi/venv/bin/python
+  
 
 #w10        pyinstaller --onefile --windowed --add-data "registro_estudiante.db;
+
