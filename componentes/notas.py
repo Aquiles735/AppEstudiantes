@@ -79,9 +79,10 @@ class VentanaNotas(tk.Toplevel):
         btn_actualizar_promedios.grid(row=5, column=0, pady=5, padx=5, sticky="we")
         btn_actualizar_promedios.bind('<Return>', lambda event=None: self.actualizar_promedios())
         
-        btn_salir = ttk.Button(contenedor_widgets, text='Salir', command=self.destroy, style='Accent.TButton')
+        # CAMBIO AQUÍ: Usar el nuevo método salir_con_advertencia
+        btn_salir = ttk.Button(contenedor_widgets, text='Salir', command=self.salir_con_advertencia, style='Accent.TButton')
         btn_salir.grid(row=5, column=1, pady=5, padx=5, sticky="we")
-        btn_salir.bind('<Return>', lambda event=None: self.destroy())
+        btn_salir.bind('<Return>', lambda event=None: self.salir_con_advertencia())
 
         # Treeview
         self.tree = ttk.Treeview(self, columns=('col1', 'col2','col3','col4','col5','col6','col7','col8','col9','col10','col11','col12','col13'), show='headings')
@@ -223,13 +224,18 @@ class VentanaNotas(tk.Toplevel):
             evaluacion = self.combobox_opciones_eval.get()
             nota = float(self.nota_entry.get())
             
+            # Validación de la nota
+            if not 0 <= nota <= 20:
+                self.message.config(fg='#e74c3c')
+                self.message['text'] = 'La nota debe estar entre 0 y 20.'
+                return
 
             query = f"UPDATE notas SET {evaluacion} = ? WHERE cedula_estudiante = ?"
             parameters = (nota, cedula)
             
             self.run_query(query, parameters)
             self.message.config(fg='#2ecc71')
-            self.message['text'] = f'Nota guardada para la cédula {cedula}.'
+            self.message['text'] = f'Nota guardada, presionar "Actualizar Promedios"'
             
             self.get_notes()
             
@@ -291,7 +297,7 @@ class VentanaNotas(tk.Toplevel):
             self.run_query(update_query, parameters)
 
             self.message.config(fg='#2ecc71')
-            self.message['text'] = f'Actualizado promedios y totales {num_evaluaciones} evaluaciones.'
+            self.message['text'] = f'Actualizado promedios y totales ( {num_evaluaciones} evaluaciones).'
             
             self.get_notes()
             
@@ -302,6 +308,14 @@ class VentanaNotas(tk.Toplevel):
             self.message.config(fg='#e74c3c')
             self.message['text'] = f'Error al actualizar promedios: {e}'
 
-
+    # Nuevo método para salir con advertencia
+    def salir_con_advertencia(self):
+        """Muestra un mensaje de advertencia antes de salir."""
+        respuesta = messagebox.askyesno(
+            "Advertencia",
+            "¿Presionaste 'Guardar cambios' y 'Actualizar Promedios' antes de salir?"
+        )
+        if respuesta:
+            self.destroy()
 
 
