@@ -102,8 +102,7 @@ class Control:
                     self.ui.cedula_entry.delete(0, 'end')
                     self.ui.nombre_entry.delete(0, 'end')
                     self.ui.apellido_entry.delete(0, 'end')
-                    self.ui.nivel_combobox.set('')
-                    self.ui.seccion_combobox.set('')
+                   
 
                 except Exception as e:
                     self.ui.messaje.config(fg='#e74c3c')
