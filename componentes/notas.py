@@ -40,8 +40,8 @@ class VentanaNotas(tk.Toplevel):
         contenedor_widgets.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
         # Mensaje de error/éxito
-        self.message = tk.Label(contenedor_widgets, text='', bg='#34495e', fg='#e74c3c', font=('Helvetica', 10, 'bold'))
-        self.message.grid(row=6, column=0, columnspan=2, sticky='ew', pady=5)
+        self.messaje = tk.Label(contenedor_widgets, text='', bg='#34495e', fg='#e74c3c', font=('Helvetica', 10, 'bold'))
+        self.messaje.grid(row=6, column=0, columnspan=2, sticky='ew', pady=5)
 
         # Labels y Entries para la entrada de notas
         ttk.Label(contenedor_widgets, text='Cédula:').grid(row=0, column=0, pady=5, padx=5, sticky="e")
@@ -195,7 +195,7 @@ class VentanaNotas(tk.Toplevel):
 
     def seleccionar_estudiante(self, event):
         """Carga los datos del estudiante seleccionado en los campos de entrada."""
-        self.message['text'] = ''
+        self.messaje['text'] = ''
         selected_item = self.tree.selection()
         if not selected_item:
             return
@@ -216,7 +216,7 @@ class VentanaNotas(tk.Toplevel):
 
     def guardar_nota(self):
         if not self.validation():
-            self.message['text'] = 'Cédula y Nota son campos obligatorios.'
+            self.messaje['text'] = 'Cédula y Nota son campos obligatorios.'
             return
         
         try:
@@ -226,16 +226,16 @@ class VentanaNotas(tk.Toplevel):
             
             # Validación de la nota
             if not 0 <= nota <= 20:
-                self.message.config(fg='#e74c3c')
-                self.message['text'] = 'La nota debe estar entre 0 y 20.'
+                self.messaje.config(fg='#e74c3c')
+                self.messaje['text'] = 'La nota debe estar entre 0 y 20.'
                 return
 
             query = f"UPDATE notas SET {evaluacion} = ? WHERE cedula_estudiante = ?"
             parameters = (nota, cedula)
             
             self.run_query(query, parameters)
-            self.message.config(fg='#2ecc71')
-            self.message['text'] = f'Nota guardada, presionar "Actualizar Promedios"'
+            self.messaje.config(fg='#2ecc71')
+            self.messaje['text'] = f'Nota guardada, presionar "Actualizar Promedios"'
             
             self.get_notes()
             
@@ -245,11 +245,11 @@ class VentanaNotas(tk.Toplevel):
             self.nota_entry.delete(0, 'end')
 
         except ValueError:
-            self.message.config(fg='#e74c3c')
-            self.message['text'] = 'La nota debe ser un número válido.'
+            self.messaje.config(fg='#e74c3c')
+            self.messaje['text'] = 'La nota debe ser un número válido.'
         except Exception as e:
-            self.message.config(fg='#e74c3c')
-            self.message['text'] = f'Error al guardar la nota: {e}'
+            self.messaje.config(fg='#e74c3c')
+            self.messaje['text'] = f'Error al guardar la nota: {e}'
 
     def actualizar_promedios(self):
         try:
@@ -258,12 +258,12 @@ class VentanaNotas(tk.Toplevel):
             try:
                 num_evaluaciones = int(num_evaluaciones_str)
                 if num_evaluaciones <= 0:
-                    self.message.config(fg='#e74c3c')
-                    self.message['text'] = 'El número de evaluaciones debe ser mayor a 0.'
+                    self.messaje.config(fg='#e74c3c')
+                    self.messaje['text'] = 'El número de evaluaciones debe ser mayor a 0.'
                     return
             except ValueError:
-                self.message.config(fg='#e74c3c')
-                self.message['text'] = 'El número de evaluaciones debe ser un número entero válido.'
+                self.messaje.config(fg='#e74c3c')
+                self.messaje['text'] = 'El número de evaluaciones debe ser un número entero válido.'
                 return
 
             update_query = f"""
@@ -296,8 +296,8 @@ class VentanaNotas(tk.Toplevel):
             parameters = (self.nivel_estudiante, self.seccion_estudiante)
             self.run_query(update_query, parameters)
 
-            self.message.config(fg='#2ecc71')
-            self.message['text'] = f'Actualizado promedios y totales ( {num_evaluaciones} evaluaciones).'
+            self.messaje.config(fg='#2ecc71')
+            self.messaje['text'] = f'Actualizado promedios y totales ( {num_evaluaciones} evaluaciones).'
             
             self.get_notes()
             
@@ -305,8 +305,8 @@ class VentanaNotas(tk.Toplevel):
                 self.callback_actualizar()
 
         except Exception as e:
-            self.message.config(fg='#e74c3c')
-            self.message['text'] = f'Error al actualizar promedios: {e}'
+            self.messaje.config(fg='#e74c3c')
+            self.messaje['text'] = f'Error al actualizar promedios: {e}'
 
     # Nuevo método para salir con advertencia
     def salir_con_advertencia(self):
