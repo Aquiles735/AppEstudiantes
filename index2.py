@@ -18,7 +18,7 @@ class Control:
     def __init__(self, window):
         self.wind = window
         self.wind.title('Sistema de Registro de Estudiantes (Elab: Prof.Aquiles M. 08/2025)')
-        self.wind.geometry('1200x700')
+        self.wind.geometry('1200x800')
         self.wind.config(bg='#2c3e50') 
 
         self.diseno = Diseno(self.wind)
@@ -203,6 +203,7 @@ class Control:
             self.ui.messaje.config(fg='#e74c3c')
             self.ui.messaje['text'] = f'Ocurrió un error inesperado: {e}'
 
+
     # ELIMINAR ESTUDIANTE
     def eliminar_estudiante(self):
         self.ui.messaje['text'] = ''
@@ -318,6 +319,41 @@ class Control:
 
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al descargar el archivo: {e}")
+
+
+    def buscar_estudiante_por_cedula(self):
+        """
+        Busca un estudiante en el Treeview por su cédula y lo resalta.
+        También limpia el campo de búsqueda después.
+        """
+        cedula_a_buscar = self.ui.search_entry.get().strip()
+        if not cedula_a_buscar:
+            self.ui.messaje.config(text="Por favor, ingrese una cédula para buscar.", fg='#e74c3c')
+            return
+        
+        self.ui.tree.selection_remove(self.ui.tree.selection())
+        self.ui.messaje.config(text="")
+
+        found = False
+        # Itera sobre todos los ítems del Treeview
+        for iid in self.ui.tree.get_children():
+            # Obtiene los valores de la fila actual
+            valores = self.ui.tree.item(iid)['values']
+            # El valor de la cédula está en la primera columna (índice 0)
+            if valores and str(valores[0]) == cedula_a_buscar:
+                # Si se encuentra, selecciona y enfoca el ítem
+                self.ui.tree.selection_set(iid)
+                self.ui.tree.focus(iid)
+                self.ui.tree.see(iid) 
+                self.ui.messaje.config(text="Estudiante encontrado y resaltado. ✅", fg='#2ecc71')
+                found = True
+                break
+        
+        # Limpiar el campo de búsqueda al finalizar
+        self.ui.search_entry.delete(0, tk.END)
+
+        if not found:
+            self.ui.messaje.config(text=f"❌ No se encontró un estudiante con la cédula: {cedula_a_buscar}", fg='#e74c3c')
 
     def borrar_todas_las_notas(self):
         respuesta = messagebox.askyesno(
