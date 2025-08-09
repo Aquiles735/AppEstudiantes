@@ -6,11 +6,11 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 
 # Importa las clases de las otras ventanas
-from componentes.notas import VentanaNotas
-from componentes.modifica import VentanaModificar
+from notas.notas import VentanaNotas
+from modifica.modifica import VentanaModificar
 
-from componentes.diseno import Diseno 
-from componentes.widgets import Widgets 
+from diseno import Diseno 
+from widgets import Widgets 
 
 class Control:
     db_name = 'registro_estudiante.db'
@@ -18,7 +18,7 @@ class Control:
     def __init__(self, window):
         self.wind = window
         self.wind.title('Sistema de Registro de Estudiantes (Elab: Prof.Aquiles M. 08/2025)')
-        self.wind.geometry('1000x700')
+        self.wind.geometry('1200x700')
         self.wind.config(bg='#2c3e50') 
 
         self.diseno = Diseno(self.wind)
