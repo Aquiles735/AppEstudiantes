@@ -49,7 +49,7 @@ class VentanaNotas(tk.Toplevel):
         if self.nivel_estudiante and self.seccion_estudiante:
             query = """
             SELECT 
-                n.cedula_estudiante, n.evaluacion_1, n.evaluacion_2, n.evaluacion_3, n.evaluacion_4, n.evaluacion_5, 
+                n.cedula_estudiante, e.nombre, e.apellido, n.evaluacion_1, n.evaluacion_2, n.evaluacion_3, n.evaluacion_4, n.evaluacion_5, 
                 n.evaluacion_6, n.evaluacion_7, n.evaluacion_8, n.evaluacion_9, n.evaluacion_10, 
                 n.promedio_notas, n.nota_definitiva
             FROM notas n
@@ -59,19 +59,33 @@ class VentanaNotas(tk.Toplevel):
             """
             parameters = (self.nivel_estudiante, self.seccion_estudiante)
         else:
+           
             query = """
             SELECT 
-                cedula_estudiante, evaluacion_1, evaluacion_2, evaluacion_3, evaluacion_4, evaluacion_5, 
-                evaluacion_6, evaluacion_7, evaluacion_8, evaluacion_9, evaluacion_10, 
-                promedio_notas, nota_definitiva 
-            FROM notas
-            ORDER BY CAST(cedula_estudiante AS INTEGER) ASC
+                n.cedula_estudiante, e.nombre, e.apellido, n.evaluacion_1, n.evaluacion_2, n.evaluacion_3, n.evaluacion_4, n.evaluacion_5, 
+                n.evaluacion_6, n.evaluacion_7, n.evaluacion_8, n.evaluacion_9, n.evaluacion_10, 
+                n.promedio_notas, n.nota_definitiva 
+            FROM notas n
+            INNER JOIN estudiantes e ON n.cedula_estudiante = e.cedula_estudiante
+            ORDER BY CAST(n.cedula_estudiante AS INTEGER) ASC
             """
             parameters = ()
-        
+           
+
         db_rows = self.run_query(query, parameters)
         for row in db_rows:
-            self.tree.insert('', 'end', text=row[0], values=row)
+           
+            row_list = list(row)
+           
+            nota_definitiva_index = 14
+            nota_definitiva = row_list[nota_definitiva_index]
+           
+            if nota_definitiva is not None:
+                row_list[nota_definitiva_index] = '{:02d}'.format(int(nota_definitiva))
+            
+            formatted_row = tuple(row_list)
+            self.tree.insert('', 'end', text=formatted_row[0], values=formatted_row)
+                
 
     def seleccionar_estudiante(self, event):
         """Carga los datos del estudiante seleccionado en los campos de entrada."""

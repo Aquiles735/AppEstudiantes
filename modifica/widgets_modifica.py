@@ -43,7 +43,7 @@ def create_widgets(self, master, cedula_estudiante_orig, nombre_orig, apellido_o
     self.apellido_entry.insert(0, apellido_orig)
     
     ttk.Label(frame, text='Nivel:').grid(row=3, column=0, sticky="e", pady=5)
-    opciones_nivel = ['1 año', '2 año', '3 año', '4 año', '5 año','6 año']
+    opciones_nivel = ['1er año', '2do año', '3er año', '4to año', '5to año', '6to año']
     self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel, state='readonly')
     self.nivel_combobox.grid(row=3, column=1, padx=5, pady=5, sticky="ew")
     self.nivel_combobox.set(nivel_orig)
