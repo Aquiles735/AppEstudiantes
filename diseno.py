@@ -37,7 +37,7 @@ class Diseno:
             'Highlight.TLabel',
             background='#34495e',
             foreground='#7de918',
-            font=('Helvetica', 10)
+            font=('Helvetica', 12)
         )
 
         # Estilo para los botones
@@ -45,7 +45,7 @@ class Diseno:
             'TButton',
             background='#3498db',  # Azul original
             foreground='white',
-            font=('Helvetica', 12, 'bold'),
+            font=('Helvetica', 10, 'bold'),
             borderwidth=1
         )
         self.style.map(
@@ -75,7 +75,7 @@ class Diseno:
             'TEntry',
             fieldbackground='#ecf0f1',
             foreground='#2c3e50',
-            font=('Helvetica', 10)
+            font=('Helvetica', 12)
         )
         
         # Estilo para los Combobox
@@ -83,7 +83,7 @@ class Diseno:
             'TCombobox',
             fieldbackground='#ecf0f1',
             foreground='#2c3e50',
-            font=('Helvetica', 10)
+            font=('Helvetica', 12)
         )
 
         # Estilo para el Treeview

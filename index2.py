@@ -21,7 +21,8 @@ class Control:
         self.wind.title(
             "Sistema de Registro de Estudiantes (Elab: Prof.Aquiles M. 08/2025)"
         )
-        self.wind.geometry("1200x800")
+
+        self.wind.geometry("1200x660")
         self.wind.config(bg="#2c3e50")
 
         self.diseno = Diseno(self.wind)
@@ -366,7 +367,7 @@ class Control:
             messagebox.showerror(
                 "Error", f"Ocurrió un error al descargar el archivo: {e}"
             )
-
+    # Buscar y resaltar
     def buscar_estudiante_por_cedula(self):
         """
         Busca un estudiante en el Treeview por su cédula y lo resalta.
@@ -422,6 +423,7 @@ class Control:
             self.get_estudiantes()
 
     def borrar_todo(self):
+
         respuesta = messagebox.askyesno(
             "Confirmar",
             "ADVERTENCIA: ¿Está seguro de que desea borrar TODOS los estudiantes y TODAS sus notas? Esta acción es irreversible.",
@@ -437,7 +439,7 @@ class Control:
             )
             self.get_estudiantes()
 
-
+    
 if __name__ == "__main__":
     window = tk.Tk()
     application = Control(window)

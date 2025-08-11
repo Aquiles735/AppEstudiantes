@@ -9,7 +9,7 @@ class Widgets:
 
         main_container = tk.Frame(self.parent, bg='#2c3e50')
         main_container.pack(fill='both', expand=True, padx=10, pady=10)
-        
+
         frame = LabelFrame(main_container, text='Registro de Estudiantes', style='My.TLabelframe')
         frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         main_container.grid_columnconfigure(0, weight=1)
@@ -43,71 +43,78 @@ class Widgets:
         self.seccion_combobox.set(opciones_seccion[0])
         self.seccion_combobox.grid(row=2, column=1, padx=2, pady=5, sticky="ew")
 
-
         # Botones de registro, notas, etc.
         btn_registrar = ttk.Button(frame, text='Registrar Estudiante', command=controller.resgist_estud)
         btn_registrar.grid(row=3, column=0, columnspan=4, sticky='we', padx=100, pady=10)
         btn_registrar.bind('<Return>', lambda event: btn_registrar.invoke())
-        Label(frame, text='Seleccionar un estudiante para registrar o modificar nota').grid(row=4, column=0,columnspan=4, sticky='we', padx=180, pady=(10,0))
-        
+        Label(frame, text='Seleccionar un estudiante para registrar o modificar nota').grid(row=4, column=0,columnspan=4, sticky='we', padx=180, pady=(5,0))
+
         btn_notas = ttk.Button(frame, text='Registrar Notas', command=controller.agregar_notas)
         btn_notas.grid(row=5, column=0, columnspan=4, sticky='we', padx=150, pady= 10)
         btn_notas.bind('<Return>', lambda event: btn_notas.invoke())
-        Label(frame, text='Seleccionar un estudiante para modificar Datos (No modifica la Cédula)').grid(row=6, column=0, columnspan=4, sticky='we', padx=140, pady=(10,0))
-        
+        Label(
+            frame,
+            text="Seleccionar un estudiante para modificar Datos (No modifica la Cédula)",
+        ).grid(row=6, column=0, columnspan=4, sticky="we", padx=140, pady=(5, 0))
+
         btn_modificar = ttk.Button(frame, text='Modificar datos de Estudiante', command=controller.modificar_estudiante)
         btn_modificar.grid(row=7, column=0, columnspan=4, sticky='we', padx=150, pady=10)
         btn_modificar.bind('<Return>', lambda event: btn_modificar.invoke())
-        Label(frame, text='Seleccionar un estudiante para retirarlo del registro').grid(row=8, column=0,columnspan=4, sticky='we', padx=190, pady=(10,0))
-        
+        Label(frame, text="Seleccionar un estudiante para retirarlo del registro").grid(row=8, column=0, columnspan=4, sticky="we", padx=190, pady=(5, 0)
+        )
+
         btn_eliminar = ttk.Button(frame, text='Eliminar Estudiante', command=controller.eliminar_estudiante)
         btn_eliminar.grid(row=9, column=0, columnspan=4, sticky='we', padx=150, pady=10)
         btn_eliminar.bind('<Return>', lambda event: btn_eliminar.invoke())
-        Label(frame, text='Seleccionar un estudiante para descargar en EXCEL las notas de la sección ').grid(row=10, column=0, columnspan=4, sticky='we', padx=120, pady=(10,0))
-        
+        Label(
+            frame,
+            text="Seleccionar un estudiante para descargar en EXCEL las notas de la sección ",
+        ).grid(row=10, column=0, columnspan=4, sticky="we", padx=120, pady=(5, 0))
+
         btn_descargar = ttk.Button(frame, text='Descargar Notas en EXCEL', command=controller.descargar_notas_a_excel)
-        btn_descargar.grid(row=12, column=0, columnspan=4, sticky='we', padx=150, pady=(10,0))
+        btn_descargar.grid(
+            row=12, column=0, columnspan=4, sticky="we", padx=150, pady=(5, 0)
+        )
         btn_descargar.bind('<Return>', lambda event: btn_descargar.invoke())
-        
+
         btn_salir = ttk.Button(frame, text='Salir', command=self.parent.destroy)
-        btn_salir.grid(row=14, column=0, columnspan=4, sticky='we', padx=200, pady=10)
+        btn_salir.grid(row=14, column=0, columnspan=4, sticky='we', padx=200, pady=(10,0))
         btn_salir.bind('<Return>', lambda event: btn_salir.invoke())
-        
+
         self.messaje = tk.Label(frame, text='', bg='#34495e', fg='#e74c3c', font=('Helvetica', 10, 'bold')) 
         self.messaje.grid(row=13, column=0, columnspan=4, sticky='we')
 
         self.tree = ttk.Treeview(main_container, columns=('col0', 'col1', 'col2', 'col3','col4'), show='headings')
-        self.tree.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        self.tree.grid(row=0, column=1, padx=10, pady=(10,0), sticky="nsew")
 
         scrollbar = ttk.Scrollbar(main_container, orient="vertical", command=self.tree.yview)
         scrollbar.grid(row=0, column=2, sticky='ns')
         self.tree.configure(yscrollcommand=scrollbar.set)
-        
+
         main_container.grid_rowconfigure(0, weight=1)
         self.tree.heading('col0', text='Cédula', anchor=tk.CENTER)
         self.tree.heading('col1', text='Nombre', anchor=tk.CENTER)
         self.tree.heading('col2', text='Apellido', anchor=tk.CENTER)
         self.tree.heading('col3', text='Nivel', anchor=tk.CENTER)
         self.tree.heading('col4', text='Secc', anchor=tk.CENTER)
-      
+
         self.tree.column('col0', width=90)
         self.tree.column('col1', width=90)
         self.tree.column('col2', width=90)
         self.tree.column('col3', width=50)
         self.tree.column('col4', width=50)
 
-
-        #Botones para borrar notas o todo
+        # Botones para borrar notas o todo
         botones_frame = tk.Frame(self.parent, bg='#2c3e50')
-        botones_frame.pack(side='bottom', fill='x', padx=10, pady=10)
-        
+        botones_frame.pack(side='bottom', fill='x', padx=10, pady=5)
+
         self.borrar_todo_btn = ttk.Button(botones_frame, text="Borrar todos los estudiantes y notas", style='Red.TButton', command=controller.borrar_todo, takefocus=0)
         self.borrar_todo_btn.pack(side='right', padx=5)
 
         self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", style='Red.TButton', command=controller.borrar_todas_las_notas, takefocus=0)
         self.borrar_notas_btn.pack(side='right', padx=5)
 
-       #Buscar estudiante
+        # Buscar estudiante
         search_frame = LabelFrame(botones_frame, text='Buscar Estudiante', style='My.TLabelframe')
         search_frame.pack(side='left', padx=5)
 
@@ -116,12 +123,12 @@ class Widgets:
 
         self.search_entry = ttk.Entry(search_frame)
         self.search_entry.pack(side='left', padx=2, pady=2)
-        
+
         self.search_entry.bind('<Return>', lambda event: self.controller.buscar_estudiante_por_cedula())
 
         self.search_button = ttk.Button(search_frame, text='Buscar', command=self.controller.buscar_estudiante_por_cedula)
         self.search_button.pack(side='left', padx=2, pady=2)
-        
+
         self.search_button.bind('<Return>', lambda event: self.search_button.invoke())
 
     def buscar_estudiante_por_cedula(self):
@@ -132,7 +139,7 @@ class Widgets:
         if not cedula_a_buscar:
             self.messaje.config(text="Por favor, ingrese una cédula para buscar.")
             return
-        
+
         # Limpiar la selección anterior y el mensaje
         self.tree.selection_remove(self.tree.selection())
         self.messaje.config(text="")
@@ -142,9 +149,9 @@ class Widgets:
         for iid in self.tree.get_children():
             # Obtiene los valores de la fila actual
             valores = self.tree.item(iid)['values']
-            
+
             if valores and valores[0] == cedula_a_buscar:
-        
+
                 self.tree.selection_set(iid)
                 self.tree.focus(iid)
                 self.tree.see(iid) # Asegura que el ítem esté visible
@@ -154,8 +161,3 @@ class Widgets:
 
         if not found:
             self.messaje.config(text=f"No se encontró un estudiante con la cédula: {cedula_a_buscar}", fg='#e74c3c')
-
-
-
-
-
