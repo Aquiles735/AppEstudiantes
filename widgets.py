@@ -131,33 +131,4 @@ class Widgets:
 
         self.search_button.bind('<Return>', lambda event: self.search_button.invoke())
 
-    def buscar_estudiante_por_cedula(self):
-        """
-        Busca un estudiante en el Treeview por su cédula y lo resalta.
-        """
-        cedula_a_buscar = self.search_entry.get().strip()
-        if not cedula_a_buscar:
-            self.messaje.config(text="Por favor, ingrese una cédula para buscar.")
-            return
-
-        # Limpiar la selección anterior y el mensaje
-        self.tree.selection_remove(self.tree.selection())
-        self.messaje.config(text="")
-
-        found = False
-        # Itera sobre todos los ítems del Treeview
-        for iid in self.tree.get_children():
-            # Obtiene los valores de la fila actual
-            valores = self.tree.item(iid)['values']
-
-            if valores and valores[0] == cedula_a_buscar:
-
-                self.tree.selection_set(iid)
-                self.tree.focus(iid)
-                self.tree.see(iid) # Asegura que el ítem esté visible
-                self.messaje.config(text="Estudiante encontrado y resaltado.", fg='#2ecc71')
-                found = True
-                break
-
-        if not found:
-            self.messaje.config(text=f"No se encontró un estudiante con la cédula: {cedula_a_buscar}", fg='#e74c3c')
+   

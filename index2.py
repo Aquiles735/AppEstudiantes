@@ -439,7 +439,7 @@ class Control:
             )
             self.get_estudiantes()
 
-    
+
 if __name__ == "__main__":
     window = tk.Tk()
     application = Control(window)
@@ -456,6 +456,10 @@ if __name__ == "__main__":
 #     pyinstaller index2.py   pyinstaller --onefile index2.py
 # AppAcademi/dist/index2 AppAcademi/dist/registro_estudiante.db
 
-#      pyinstaller --onefile --noconsole index2.py
+
+# para cargar carpeta        pyinstaller --windowed index2.py
+
+
+#  ejecutable         pyinstaller --onefile --noconsole index2.py
 
 #   /home/aquiles/Documentos/MiAcademi/AppAcademi/venv/bin/python
