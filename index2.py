@@ -4,6 +4,7 @@ import sqlite3
 import os
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
+import sqlite3
 
 # Importa las clases de las otras ventanas
 from notas.notas import VentanaNotas
@@ -66,7 +67,6 @@ class Control:
         return True
 
     # REGISTRAR ESTUDIANTE
-    import sqlite3
 
     def resgist_estud(self):
         if self.validation():
