@@ -5,8 +5,6 @@ import os
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 import sqlite3
-
-# Importa las clases de las otras ventanas
 from notas.notas import VentanaNotas
 from modifica.modifica import VentanaModificar
 
@@ -67,7 +65,6 @@ class Control:
         return True
 
     # REGISTRAR ESTUDIANTE
-
     def resgist_estud(self):
         if self.validation():
             cedula_ingresada = self.ui.cedula_entry.get()
