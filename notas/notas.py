@@ -122,7 +122,7 @@ class VentanaNotas(tk.Toplevel):
             return
 
         item = self.tree.item(selected_item[0])
-        cedula = item["values"][0]
+        cedula = item["values"][1]
 
         self.cedula_entry.config(state="normal")
         self.cedula_entry.delete(0, "end")

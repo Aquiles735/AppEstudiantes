@@ -26,11 +26,14 @@ def create_widgets(self, master, cedula_estudiante_orig, nombre_orig, apellido_o
 
     self.messaje = tk.Label(frame, text='', bg='#34495e', fg='#e74c3c', font=('Helvetica', 10, 'bold'))
     self.messaje.grid(row=5, column=0, columnspan=2, sticky='ew', pady=5)
-
+    
+    # Cedula visible pero no modificable
     ttk.Label(frame, text='Cédula:').grid(row=0, column=0, sticky="e", pady=5)
     self.cedula_entry = ttk.Entry(frame, state='readonly')
     self.cedula_entry.grid(row=0, column=1, sticky="ew", padx=5)
+    self.cedula_entry.config(state='normal')
     self.cedula_entry.insert(0, cedula_estudiante_orig)
+    self.cedula_entry.config(state='readonly')
 
     ttk.Label(frame, text='Nombre:').grid(row=1, column=0, sticky="e", pady=5)
     self.nombre_entry = ttk.Entry(frame)
