@@ -299,7 +299,9 @@ class Control:
             ws = wb.active
             ws.title = f"Notas {nivel_seleccionado} {seccion_seleccionada}"
 
+            # 1. Agrega el encabezado
             headers = [
+                "N°", 
                 "Cédula",
                 "Nombre",
                 "Apellido",
@@ -323,17 +325,18 @@ class Control:
                 cell.font = Font(bold=True)
                 cell.alignment = Alignment(horizontal="center", vertical="center")
 
-            row_number = 2
-            for row in data_rows:
-                ws.append(row)
+            # 2. Itera sobre los datos y agrega el número de fila
+            for i, row in enumerate(data_rows, start=1):
+                # Formatea el número de fila a dos dígitos (ej. 1 -> '01')
+                row_number_formatted = f"{i:02d}"
+                
+                # Crea una nueva fila de datos con la numeración al principio
+                new_row = [row_number_formatted] + list(row)
+                
+                # Agrega la nueva fila al Excel
+                ws.append(new_row)
 
-                for col_index in range(4, 18):
-                    cell_to_align = ws.cell(row=row_number, column=col_index)
-                    cell_to_align.alignment = Alignment(
-                        horizontal="left", vertical="center"
-                    )
-                row_number += 1
-
+            # 3. Ajusta los anchos de las columnas 
             for col in ws.columns:
                 max_length = 0
                 column = col[0].column_letter
@@ -364,6 +367,7 @@ class Control:
             messagebox.showerror(
                 "Error", f"Ocurrió un error al descargar el archivo: {e}"
             )
+   
     # Buscar y resaltar
     def buscar_estudiante_por_cedula(self):
         """

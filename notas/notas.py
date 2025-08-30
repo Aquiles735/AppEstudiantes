@@ -50,7 +50,6 @@ class VentanaNotas(tk.Toplevel):
             result = cursor.execute(query, parameters)
             conn.commit()
         return result
-
     def get_notes(self):
         records = self.tree.get_children()
         for element in records:
@@ -82,16 +81,18 @@ class VentanaNotas(tk.Toplevel):
 
         db_rows = self.run_query(query, parameters)
 
-        # Iterar sobre las filas de la base de datos
-        for row in db_rows:
+        # Iterar sobre las filas de la base de datos con un contador
+        for i, row in enumerate(db_rows, start=1):
             row_list = list(row)
 
+            # Formatear la numeración de la fila a dos dígitos
+            numeracion = f"{i:02d}"
+
             # Formatear las notas (columnas 3 a 12)
-            for i in range(3, 13):
-                nota = row_list[i]
+            for j in range(3, 13):
+                nota = row_list[j]
                 if nota is not None:
-                    # Convierte la nota a entero  con 2 dígitos
-                    row_list[i] = f"{int(nota):02d}"
+                    row_list[j] = f"{int(nota):02d}"
 
             # Formatear el promedio
             promedio_index = 13
@@ -104,9 +105,14 @@ class VentanaNotas(tk.Toplevel):
             nota_definitiva = row_list[nota_definitiva_index]
             if nota_definitiva is not None:
                 row_list[nota_definitiva_index] = "{:02d}".format(int(nota_definitiva))
-
-            formatted_row = tuple(row_list)
-            self.tree.insert("", "end", text=formatted_row[0], values=formatted_row)
+            
+            # Combinar la numeración con los datos de la fila
+            formatted_row = [numeracion] + row_list
+            
+            # Insertar la fila formateada en el Treeview
+            # text="" para que la primera columna sea la que definimos, no el ID de la base de datos
+            self.tree.insert("", "end", values=formatted_row)
+            
 
     def seleccionar_estudiante(self, event):
      

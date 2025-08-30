@@ -72,7 +72,7 @@ def create_widgets(self, master, cedula_estudiante=None):
     btn_salir.bind('<Return>', lambda event=None: self.salir_con_advertencia())
 
     # Treeview
-    # Se agrega 'numeracion' a la lista de columnas
+    
     self.tree = ttk.Treeview(self, columns=('col1', 'col2','col3','col4','col5','col6','col7','col8','col9','col10','col11','col12','col13','col14','col15',
                                             'col16' ), show='headings')
     self.tree.grid(row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew")
@@ -89,7 +89,7 @@ def create_widgets(self, master, cedula_estudiante=None):
     self.grid_columnconfigure(1, weight=1)
     self.grid_rowconfigure(0, weight=1)
 
-    # Se agregan los encabezados, comenzando con la nueva columna de numeración
+    # Se agregan los encabezados
     self.tree.heading('col1', text='N°', anchor='center')
     self.tree.heading('col2', text='Cédula', anchor='center')
     self.tree.heading('col3', text='Nombre', anchor='center')
@@ -107,7 +107,7 @@ def create_widgets(self, master, cedula_estudiante=None):
     self.tree.heading('col15', text='Prom.', anchor='center')
     self.tree.heading('col16', text='TOTAL', anchor='center')
 
-    # Se definen los anchos de las columnas, incluyendo la nueva columna 'numeracion'
+    # Se definen los anchos de las columnas
     self.tree.column('col1', width=40)
     self.tree.column('col2', width=70)
     self.tree.column('col3', width=70)
@@ -122,8 +122,8 @@ def create_widgets(self, master, cedula_estudiante=None):
     self.tree.column('col12', width=40)
     self.tree.column('col13', width=40)
     self.tree.column('col14', width=40)
-    self.tree.column('col15', width=70)
-    self.tree.column('col16', width=70)
+    self.tree.column('col15', width=60)
+    self.tree.column('col16', width=60)
 
     self.get_notes()
 
