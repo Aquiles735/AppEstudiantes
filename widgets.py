@@ -110,10 +110,10 @@ class Widgets:
         botones_frame = tk.Frame(self.parent, bg='#2c3e50')
         botones_frame.pack(side='bottom', fill='x', padx=10, pady=5)
 
-        self.borrar_todo_btn = ttk.Button(botones_frame, text="Borrar todos los estudiantes y notas", style='Red.TButton', command=controller.borrar_todo, takefocus=0)
+        self.borrar_todo_btn = ttk.Button(botones_frame, text="Borrar todos los Niveles", style='Red.TButton', command=controller.borrar_todo, takefocus=0)
         self.borrar_todo_btn.pack(side='right', padx=5)
 
-        self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", style='Red.TButton', command=controller.borrar_todas_las_notas, takefocus=0)
+        self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar las notas de todos los Niveles", style='Red.TButton', command=controller.borrar_todas_las_notas, takefocus=0)
         self.borrar_notas_btn.pack(side='right', padx=5)
         
       # Frame de búsqueda por nivel y sección
