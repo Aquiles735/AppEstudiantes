@@ -367,6 +367,44 @@ class Control:
             messagebox.showerror(
                 "Error", f"Ocurrió un error al descargar el archivo: {e}"
             )
+    def buscar_nivel_seccion(self):
+        """
+        Busca y muestra estudiantes por nivel y sección seleccionados.
+        """
+        nivel_a_buscar = self.ui.nivel_search_combobox.get()
+        seccion_a_buscar = self.ui.seccion_search_combobox.get()
+
+        if not nivel_a_buscar or not seccion_a_buscar:
+            self.ui.messaje.config(
+                text="❌ Por favor, seleccione un nivel y una sección para buscar.", fg="#e74c3c"
+            )
+            return
+
+        # Limpiar el Treeview y el mensaje de estado
+        records = self.ui.tree.get_children()
+        for element in records:
+            self.ui.tree.delete(element)
+        self.ui.messaje.config(text="")
+
+        query = "SELECT cedula_estudiante, nombre, apellido, nivel, seccion FROM estudiantes WHERE nivel = ? AND seccion = ? ORDER BY CAST(cedula_estudiante AS INTEGER) ASC;"
+        parameters = (nivel_a_buscar, seccion_a_buscar)
+        db_rows = self.run_query(query, parameters)
+
+        found = False
+        for row in db_rows:
+            self.ui.tree.insert("", "end", text=row[0], values=row[0:])
+            found = True
+
+        if found:
+            self.ui.messaje.config(
+                text=f"✅ Estudiantes del nivel {nivel_a_buscar} sección {seccion_a_buscar} mostrados.",
+                fg="#2ecc71",
+            )
+        else:
+            self.ui.messaje.config(
+                text=f"❌ No se encontraron estudiantes para el nivel {nivel_a_buscar} sección {seccion_a_buscar}.",
+                fg="#e74c3c",
+            )
    
     # Buscar y resaltar
     def buscar_estudiante_por_cedula(self):

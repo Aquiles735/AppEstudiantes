@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 def create_widgets(self, master, cedula_estudiante=None):
+    
     self.title("Registrar Notas")
     self.transient(master)
     self.grab_set()

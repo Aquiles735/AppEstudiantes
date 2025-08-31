@@ -19,29 +19,31 @@ class Widgets:
         frame.grid_columnconfigure(2, weight=0)
         frame.grid_columnconfigure(3, weight=0)
 
-        Label(frame, text='Cédula').grid(row=0, column=0, padx=2, pady=5, sticky='e')
+       
+        Label(frame, text='Cédula:').grid(row=0, column=0, pady=5, sticky='e')
         self.cedula_entry = ttk.Entry(frame)
-        self.cedula_entry.grid(row=0, column=1, padx=2, pady=5, sticky='ew')
+        self.cedula_entry.grid(row=0, column=1, pady=5, sticky='w')
 
-        Label(frame, text='Nombre:').grid(row=0, column=2, padx=2, pady=5, sticky='e')
+        Label(frame, text='Nombre:').grid(row=0, column=2, pady=5, sticky='e')
         self.nombre_entry = ttk.Entry(frame)
-        self.nombre_entry.grid(row=0, column=3, padx=2, pady=5, sticky='ew')
+        self.nombre_entry.grid(row=0, column=3, pady=5, sticky='w')
 
-        Label(frame, text='Apellido:').grid(row=1, column=0, padx=2, pady=5, sticky='e')
+        Label(frame, text='Apellido:').grid(row=1, column=0, pady=5, sticky='e')
         self.apellido_entry = ttk.Entry(frame)
-        self.apellido_entry.grid(row=1, column=1, padx=2, pady=5, sticky='ew')
+        self.apellido_entry.grid(row=1, column=1, pady=5, sticky='w')
 
-        Label(frame, text='Nivel:').grid(row=1, column=2, padx=2, pady=5, sticky='e')
+        Label(frame, text='Nivel:').grid(row=1, column=2, pady=5, sticky='e')
         opciones_nivel = ['1er año', '2do año', '3er año', '4to año', '5to año', '6to año']
-        self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel)
+        self.nivel_combobox = ttk.Combobox(frame, values=opciones_nivel, width=7)
         self.nivel_combobox.set(opciones_nivel[0])
-        self.nivel_combobox.grid(row=1, column=3, padx=2, pady=5, sticky="ew")
+        self.nivel_combobox.grid(row=1, column=3, pady=5, sticky='w')
 
-        Label(frame, text='Sección:').grid(row=2, column=0, padx=2, pady=5, sticky='e')
+        Label(frame, text='Sección:').grid(row=2, column=0, pady=5, sticky='e')
         opciones_seccion = ['A','B','C','D','E','F','G','H']
-        self.seccion_combobox = ttk.Combobox(frame, values=opciones_seccion)
+        self.seccion_combobox = ttk.Combobox(frame, values=opciones_seccion, width=7)
         self.seccion_combobox.set(opciones_seccion[0])
-        self.seccion_combobox.grid(row=2, column=1, padx=2, pady=5, sticky="ew")
+        self.seccion_combobox.grid(row=2, column=1, pady=5, sticky='w')
+
 
         # Botones de registro, notas, etc.
         btn_registrar = ttk.Button(frame, text='Registrar Estudiante', command=controller.resgist_estud)
@@ -113,11 +115,31 @@ class Widgets:
 
         self.borrar_notas_btn = ttk.Button(botones_frame, text="Borrar todas las notas", style='Red.TButton', command=controller.borrar_todas_las_notas, takefocus=0)
         self.borrar_notas_btn.pack(side='right', padx=5)
+        
+      # Frame de búsqueda por nivel y sección
+        self.seach_by_level_frame = LabelFrame(botones_frame, text='Buscar por Nivel/Sección', style='My.TLabelframe')
+        self.seach_by_level_frame.pack(side="left", padx=5)
 
-        # Buscar estudiante
-        search_frame = LabelFrame(botones_frame, text='Buscar Estudiante', style='My.TLabelframe')
+        self.level_search_label = Label(self.seach_by_level_frame, text="Nivel:", style='My.TLabelframe.Label')
+        self.level_search_label.pack(side="left", padx=2, pady=2)
+        opciones_nivel_busqueda = ['1er año', '2do año', '3er año', '4to año', '5to año', '6to año']
+        self.nivel_search_combobox = ttk.Combobox(self.seach_by_level_frame, values=opciones_nivel_busqueda, state="readonly", width=7)
+        self.nivel_search_combobox.pack(side="left", padx=2, pady=2)
+
+        self.seccion_search_label = Label(self.seach_by_level_frame, text="Sección:", style='My.TLabelframe.Label')
+        self.seccion_search_label.pack(side="left", padx=2, pady=2)
+        opciones_seccion_busqueda = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        self.seccion_search_combobox = ttk.Combobox(self.seach_by_level_frame, values=opciones_seccion_busqueda, state="readonly", width=7)
+        self.seccion_search_combobox.pack(side="left", padx=2, pady=2)
+
+        self.search_by_level_btn = ttk.Button(self.seach_by_level_frame, text="Buscar", command=self.controller.buscar_nivel_seccion)
+        self.search_by_level_btn.pack(side="left", padx=2, pady=2)
+        self.search_by_level_btn.bind('<Return>', lambda event: self.search_by_level_btn.invoke())
+
+        # Buscar estudiante por cédula
+        search_frame = LabelFrame(botones_frame, text='Buscar por Cédula', style='My.TLabelframe')
         search_frame.pack(side='left', padx=5)
-
+        
         self.search_label = Label(search_frame, text='Cédula:', style='My.TLabelframe.Label')
         self.search_label.pack(side='left', padx=2, pady=2)
 
@@ -128,7 +150,7 @@ class Widgets:
 
         self.search_button = ttk.Button(search_frame, text='Buscar', command=self.controller.buscar_estudiante_por_cedula)
         self.search_button.pack(side='left', padx=2, pady=2)
-
         self.search_button.bind('<Return>', lambda event: self.search_button.invoke())
 
-   
+
+
