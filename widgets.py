@@ -136,45 +136,21 @@ class Widgets:
         self.search_by_level_btn.pack(side="left", padx=2, pady=2)
         self.search_by_level_btn.bind('<Return>', lambda event: self.search_by_level_btn.invoke())
 
-
-        # ... (código anterior para búsqueda por nivel y sección)
-
         # Buscar estudiante por cédula
         search_frame = LabelFrame(botones_frame, text='Buscar por Cédula', style='My.TLabelframe')
         search_frame.pack(side='left', padx=5)
-
+        
         self.search_label = Label(search_frame, text='Cédula:', style='My.TLabelframe.Label')
         self.search_label.pack(side='left', padx=2, pady=2)
 
         self.search_entry = ttk.Entry(search_frame)
         self.search_entry.pack(side='left', padx=2, pady=2)
 
-        # MODIFICACIÓN 1: El bind debe llamar a una función lambda que OBTENGA el valor del entry
-        self.search_entry.bind('<Return>', lambda event: self.controller.buscar_estudiante_por_cedula(self.search_entry.get()))
+        self.search_entry.bind('<Return>', lambda event: self.controller.buscar_estudiante_por_cedula())
 
-        # MODIFICACIÓN 2: El command del botón debe llamar a una función lambda que OBTENGA el valor del entry
-        self.search_button = ttk.Button(search_frame, text='Buscar', 
-                                        command=lambda: self.controller.buscar_estudiante_por_cedula(self.search_entry.get()))
+        self.search_button = ttk.Button(search_frame, text='Buscar', command=self.controller.buscar_estudiante_por_cedula)
         self.search_button.pack(side='left', padx=2, pady=2)
-
-        # El bind de un botón para 'Return' no necesita cambiar la forma de invocarlo, pero lo dejo por si acaso
         self.search_button.bind('<Return>', lambda event: self.search_button.invoke())
-
-        # # Buscar estudiante por cédula
-        # search_frame = LabelFrame(botones_frame, text='Buscar por Cédula', style='My.TLabelframe')
-        # search_frame.pack(side='left', padx=5)
-        
-        # self.search_label = Label(search_frame, text='Cédula:', style='My.TLabelframe.Label')
-        # self.search_label.pack(side='left', padx=2, pady=2)
-
-        # self.search_entry = ttk.Entry(search_frame)
-        # self.search_entry.pack(side='left', padx=2, pady=2)
-
-        # self.search_entry.bind('<Return>', lambda event: self.controller.buscar_estudiante_por_cedula())
-
-        # self.search_button = ttk.Button(search_frame, text='Buscar', command=self.controller.buscar_estudiante_por_cedula)
-        # self.search_button.pack(side='left', padx=2, pady=2)
-        # self.search_button.bind('<Return>', lambda event: self.search_button.invoke())
 
 
 

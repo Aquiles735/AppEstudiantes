@@ -4,7 +4,6 @@ import sqlite3
 import os
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
-import sqlite3
 from notas.notas import VentanaNotas
 from modifica.modifica import VentanaModificar
 
@@ -46,8 +45,9 @@ class Control:
         db_rows = self.run_query(query)
         for row in db_rows:
             self.ui.tree.insert("", "end", text=row[0], values=row[0:])
+           
 
-    # LÓGICA DE VALIDACIÓN
+    # LÓGICA DE VALIDACIÓN 
     def validation(self):
         self.ui.messaje["text"] = ""
         cedula = self.ui.cedula_entry.get()
@@ -64,7 +64,7 @@ class Control:
 
         return True
 
-    # REGISTRAR ESTUDIANTE
+    # REGISTRAR ESTUDIANTE 
     def resgist_estud(self):
         if self.validation():
             cedula_ingresada = self.ui.cedula_entry.get()
@@ -119,7 +119,7 @@ class Control:
         else:
             self.ui.messaje.config(fg="#e74c3c")
 
-    # CARGAR DATOS EN CAMPOS DE ENTRADA
+    # CARGAR DATOS EN CAMPOS DE ENTRADA 
     def seleccionar_estudiante(self, event):
         self.ui.messaje["text"] = ""
         selected_item = self.ui.tree.focus()
@@ -144,7 +144,7 @@ class Control:
 
         self.ui.seccion_combobox.set(values[4])
 
-    # AGREGAR NOTAS
+    # AGREGAR NOTAS 
     def agregar_notas(self):
         self.ui.messaje["text"] = ""
         try:
@@ -179,7 +179,7 @@ class Control:
                 "Seleccione un estudiante de la tabla para registrar notas."
             )
 
-    # MODIFICAR ESTUDIANTE
+    # MODIFICAR ESTUDIANTE 
     def modificar_estudiante(self):
         self.ui.messaje["text"] = ""
         try:
@@ -219,7 +219,7 @@ class Control:
             self.ui.messaje.config(fg="#e74c3c")
             self.ui.messaje["text"] = f"Ocurrió un error inesperado: {e}"
 
-    # ELIMINAR ESTUDIANTE
+    # ELIMINAR ESTUDIANTE 
     def eliminar_estudiante(self):
         self.ui.messaje["text"] = ""
         try:
@@ -253,7 +253,7 @@ class Control:
             self.ui.messaje.config(fg="#e74c3c")
             self.ui.messaje["text"] = f"Error al eliminar el estudiante: {e}"
 
-    # DESCARGAR NOTAS A EXCEL
+    # DESCARGAR NOTAS A EXCEL 
     def descargar_notas_a_excel(self):
         try:
             selected_item = self.ui.tree.focus()
@@ -367,6 +367,8 @@ class Control:
             messagebox.showerror(
                 "Error", f"Ocurrió un error al descargar el archivo: {e}"
             )
+
+    # BUSCAR POR NIVEL Y SECCIÓN 
     def buscar_nivel_seccion(self):
         """
         Busca y muestra estudiantes por nivel y sección seleccionados.
@@ -405,49 +407,56 @@ class Control:
                 text=f"❌ No se encontraron estudiantes para el nivel {nivel_a_buscar} sección {seccion_a_buscar}.",
                 fg="#e74c3c",
             )
-   
-    # Buscar y resaltar
+    #Busqueda de estudiantes por numero de cedula
     def buscar_estudiante_por_cedula(self):
         """
-        Busca un estudiante en el Treeview por su cédula y lo resalta.
-        También limpia el campo de búsqueda después.
+        Busca un estudiante por su cédula en la BD y actualiza el Treeview
+        para mostrar solo el resultado encontrado.
         """
         cedula_a_buscar = self.ui.search_entry.get().strip()
+        
         if not cedula_a_buscar:
             self.ui.messaje.config(
                 text="Por favor, ingrese una cédula para buscar.", fg="#e74c3c"
             )
             return
 
-        self.ui.tree.selection_remove(self.ui.tree.selection())
+        # Limpiar el Treeview y el mensaje de estado antes de la búsqueda
+        records = self.ui.tree.get_children()
+        for element in records:
+            self.ui.tree.delete(element)
         self.ui.messaje.config(text="")
-
-        found = False
-        # Itera sobre todos los ítems del Treeview
-        for iid in self.ui.tree.get_children():
-            # Obtiene los valores de la fila actual
-            valores = self.ui.tree.item(iid)["values"]
-            # El valor de la cédula está en la primera columna (índice 0)
-            if valores and str(valores[0]) == cedula_a_buscar:
-                # Si se encuentra, selecciona y enfoca el ítem
-                self.ui.tree.selection_set(iid)
-                self.ui.tree.focus(iid)
-                self.ui.tree.see(iid)
-                self.ui.messaje.config(
-                    text="Estudiante encontrado y resaltado. ✅", fg="#2ecc71"
-                )
-                found = True
-                break
+        
+        # Consulta SQL para buscar por cédula
+        query = "SELECT cedula_estudiante, nombre, apellido, nivel, seccion FROM estudiantes WHERE cedula_estudiante = ?;"
+        parameters = (cedula_a_buscar,)
+        
+        # Ejecutar la consulta y obtener el primer resultado
+        db_row = self.run_query(query, parameters).fetchone()
 
         # Limpiar el campo de búsqueda al finalizar
         self.ui.search_entry.delete(0, tk.END)
 
-        if not found:
+        if db_row:
+            # Si se encuentra, inserta SOLO ese estudiante en el Treeview
+            self.ui.tree.insert("", "end", text=db_row[0], values=db_row[0:])
+            
+            # Resaltar (seleccionar y enfocar) el único elemento en el Treeview
+            iid = self.ui.tree.get_children()[0] 
+            self.ui.tree.selection_set(iid)
+            self.ui.tree.focus(iid)
+            
+            self.ui.messaje.config(
+                text=f"✅ Estudiante encontrado: {db_row[1]} {db_row[2]}", 
+                fg="#2ecc71"
+            )
+        else:
             self.ui.messaje.config(
                 text=f"❌ No se encontró un estudiante con la cédula: {cedula_a_buscar}",
                 fg="#e74c3c",
             )
-
+   
+   #Borrar todos los estudiantes
     def borrar_todas_las_notas(self):
         respuesta = messagebox.askyesno(
             "Confirmar",
@@ -483,6 +492,7 @@ if __name__ == "__main__":
     window = tk.Tk()
     application = Control(window)
     window.mainloop()
+
     # mis anotaciones de mergencia por cambio linux----window A.M.
 #    python3 index2.py
 #    python3 -m venv venv     linux
