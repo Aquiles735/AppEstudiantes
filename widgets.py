@@ -27,6 +27,7 @@ class Widgets:
         Label(frame, text='Nombre:').grid(row=0, column=2, pady=5, sticky='e')
         self.nombre_entry = ttk.Entry(frame)
         self.nombre_entry.grid(row=0, column=3, pady=5, sticky='w')
+        
 
         Label(frame, text='Apellido:').grid(row=1, column=0, pady=5, sticky='e')
         self.apellido_entry = ttk.Entry(frame)
@@ -124,6 +125,7 @@ class Widgets:
         self.level_search_label.pack(side="left", padx=2, pady=2)
         opciones_nivel_busqueda = ['1er año', '2do año', '3er año', '4to año', '5to año', '6to año']
         self.nivel_search_combobox = ttk.Combobox(self.seach_by_level_frame, values=opciones_nivel_busqueda, state="readonly", width=7)
+        self.nivel_search_combobox.set(opciones_nivel_busqueda[0])
         self.nivel_search_combobox.pack(side="left", padx=2, pady=2)
 
         self.seccion_search_label = Label(self.seach_by_level_frame, text="Sección:", style='My.TLabelframe.Label')
@@ -133,6 +135,7 @@ class Widgets:
         self.seccion_search_combobox.pack(side="left", padx=2, pady=2)
 
         self.search_by_level_btn = ttk.Button(self.seach_by_level_frame, text="Buscar", command=self.controller.buscar_nivel_seccion)
+        self.seccion_search_combobox.set(opciones_seccion_busqueda[0])
         self.search_by_level_btn.pack(side="left", padx=2, pady=2)
         self.search_by_level_btn.bind('<Return>', lambda event: self.search_by_level_btn.invoke())
 

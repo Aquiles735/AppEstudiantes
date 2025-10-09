@@ -63,11 +63,15 @@ class Control:
             return False
 
         return True
-
-    # REGISTRAR ESTUDIANTE 
+    # REGISTRAR ESTUDIANTE
     def resgist_estud(self):
         if self.validation():
             cedula_ingresada = self.ui.cedula_entry.get()
+
+            # Obtener y formatear el nombre y el apellido para que la primera letra de cada palabra sea mayúscula
+
+            nombre_formateado = self.ui.nombre_entry.get().title()
+            apellido_formateado = self.ui.apellido_entry.get().title()
 
             # Revision si la cedula existe
             check_query = (
@@ -86,16 +90,15 @@ class Control:
                 self.ui.cedula_entry.delete(0, "end")
                 self.ui.nombre_entry.delete(0, "end")
                 self.ui.apellido_entry.delete(0, "end")
-                self.ui.nivel_combobox.set("")
-                self.ui.seccion_combobox.set("")
 
             else:
                 # Si no existe, procede con la inserción y limpia todos los campos
                 query = "INSERT INTO estudiantes VALUES (?, ?, ?, ?, ?)"
                 parameters = (
                     cedula_ingresada,
-                    self.ui.nombre_entry.get(),
-                    self.ui.apellido_entry.get(),
+                    # Usamos las variables formateadas aquí
+                    nombre_formateado,
+                    apellido_formateado,
                     self.ui.nivel_combobox.get(),
                     self.ui.seccion_combobox.get(),
                 )
@@ -103,7 +106,8 @@ class Control:
                     self.run_query(query, parameters)
                     self.ui.messaje.config(fg="#2ecc71")
                     self.ui.messaje["text"] = (
-                        f"Estudiante {self.ui.nombre_entry.get()} agregado satisfactoriamente"
+                        # Usamos el nombre formateado para el mensaje
+                        f"Estudiante {nombre_formateado} agregado satisfactoriamente"
                     )
                     self.get_estudiantes()
 
@@ -118,6 +122,7 @@ class Control:
 
         else:
             self.ui.messaje.config(fg="#e74c3c")
+    
 
     # CARGAR DATOS EN CAMPOS DE ENTRADA 
     def seleccionar_estudiante(self, event):
@@ -144,7 +149,7 @@ class Control:
 
         self.ui.seccion_combobox.set(values[4])
 
-    # AGREGAR NOTAS 
+    # AGREGAR o Modificar NOTAS 
     def agregar_notas(self):
         self.ui.messaje["text"] = ""
         try:
